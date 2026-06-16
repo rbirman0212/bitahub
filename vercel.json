@@ -1,7 +1,7 @@
 {
   "rewrites": [
     { "source": "/", "destination": "/bitahub-home.html" },
-    { "source": "/cadastro", "destination": "/bitahub-cadastro-final (1).html" },
-    { "source": "/admin", "destination": "/bitahub-admin (1).html" }
+    { "source": "/cadastro", "destination": "/bitahub-cadastro-final%20(1).html" },
+    { "source": "/admin", "destination": "/bitahub-admin%20(1).html" }
   ]
 }
