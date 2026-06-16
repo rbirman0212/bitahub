@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BitaHub — Segurança da Comunidade em São Paulo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#fff;overflow-x:hidden}
+
+  /* NAV */
+  nav{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 4rem;position:fixed;top:0;width:100%;z-index:100;background:rgba(10,10,15,0.88);backdrop-filter:blur(14px);border-bottom:0.5px solid rgba(255,255,255,0.06)}
+  .nav-logo{display:flex;align-items:center;gap:10px}
+  .nav-logo-text{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;color:#fff}
+  .nav-logo-text span{color:#378ADD}
+  .nav-sp-badge{font-size:10px;font-weight:600;background:rgba(55,138,221,0.15);border:0.5px solid rgba(55,138,221,0.3);color:#378ADD;padding:3px 8px;border-radius:20px;letter-spacing:0.5px}
+  .nav-links{display:flex;align-items:center;gap:2rem}
+  .nav-links a{color:rgba(255,255,255,0.55);text-decoration:none;font-size:14px;transition:color 0.2s}
+  .nav-links a:hover{color:#fff}
+  .nav-cta{background:#185FA5;color:#fff;padding:9px 20px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;transition:background 0.2s}
+  .nav-cta:hover{background:#378ADD}
+
+  /* HERO */
+  .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:8rem 4rem 4rem;position:relative;overflow:hidden}
+  .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 55% 55% at 50% 40%,rgba(56,138,221,0.13) 0%,transparent 70%);pointer-events:none}
+  .hero-ring{position:absolute;border-radius:50%;border:0.5px solid rgba(127,119,221,0.12)}
+  .hero-ring-1{width:580px;height:580px;top:50%;left:50%;transform:translate(-50%,-55%)}
+  .hero-ring-2{width:780px;height:780px;top:50%;left:50%;transform:translate(-50%,-55%)}
+  .hero-inner{max-width:780px;text-align:center;position:relative;z-index:1}
+  .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(55,138,221,0.1);border:0.5px solid rgba(55,138,221,0.28);border-radius:20px;padding:6px 16px;font-size:12px;color:#378ADD;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:2rem}
+  .hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#1D9E75;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  .hero-title{font-family:'Sora',sans-serif;font-size:56px;font-weight:800;line-height:1.08;letter-spacing:-1.5px;margin-bottom:1.5rem}
+  .hero-title .blue{color:#378ADD}
+  .hero-title .purple{color:#7F77DD}
+  .hero-desc{font-size:17px;color:rgba(255,255,255,0.5);line-height:1.75;max-width:500px;margin:0 auto 1rem}
+  .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:0}
+  .btn-primary{background:#185FA5;color:#fff;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:600;text-decoration:none;transition:all 0.2s;border:none;cursor:pointer;display:inline-block}
+  .btn-primary:hover{background:#378ADD;transform:translateY(-1px)}
+  .btn-secondary{background:transparent;color:#fff;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:500;text-decoration:none;border:0.5px solid rgba(255,255,255,0.18);transition:all 0.2s;cursor:pointer;display:inline-block}
+  .btn-secondary:hover{border-color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.04)}
+
+
+
+  /* STATS */
+  .stats{display:flex;justify-content:center;gap:4rem;padding:2.5rem 4rem;border-top:0.5px solid rgba(255,255,255,0.06);border-bottom:0.5px solid rgba(255,255,255,0.06)}
+  .stat-item{text-align:center}
+  .stat-num{font-family:'Sora',sans-serif;font-size:30px;font-weight:800}
+  .stat-num span{color:#378ADD}
+  .stat-label{font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;letter-spacing:0.3px}
+  .stat-sp{font-size:10px;color:rgba(55,138,221,0.6);margin-top:2px;font-weight:500}
+
+  /* SECTION */
+  .section{padding:5rem 4rem;max-width:1100px;margin:0 auto}
+  .section-label{font-size:11px;font-weight:600;color:#7F77DD;letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem}
+  .section-title{font-family:'Sora',sans-serif;font-size:34px;font-weight:800;letter-spacing:-0.8px;margin-bottom:0.75rem;line-height:1.15}
+  .section-desc{font-size:15px;color:rgba(255,255,255,0.45);line-height:1.75;max-width:480px;margin-bottom:3rem}
+
+  /* NÍVEIS */
+  .levels-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .level-card{background:#111118;border:0.5px solid rgba(255,255,255,0.07);border-radius:16px;padding:1.75rem;position:relative;transition:border-color 0.2s}
+  .level-card:hover{border-color:rgba(55,138,221,0.25)}
+  .level-card.featured{border-color:rgba(55,138,221,0.35);background:#0d1520}
+  .featured-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#185FA5;color:#fff;font-size:11px;font-weight:600;padding:4px 14px;border-radius:20px;white-space:nowrap}
+  .level-num{font-size:11px;font-weight:600;color:rgba(255,255,255,0.28);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:1rem}
+  .level-name{font-family:'Sora',sans-serif;font-size:19px;font-weight:700;margin-bottom:0.5rem}
+  .level-desc-text{font-size:13px;color:rgba(255,255,255,0.42);line-height:1.6;margin-bottom:1.5rem}
+  .level-price{font-family:'Sora',sans-serif;font-size:26px;font-weight:800;margin-bottom:1.5rem}
+  .level-price small{font-size:12px;font-weight:400;color:rgba(255,255,255,0.38);font-family:'Inter',sans-serif}
+  .level-features{display:flex;flex-direction:column;gap:9px}
+  .feat{display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.55)}
+  .feat-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+  .dot-blue{background:#378ADD}
+  .dot-purple{background:#7F77DD}
+  .dot-teal{background:#1D9E75}
+
+  /* COMO FUNCIONA */
+  .how-section{padding:5rem 4rem;background:#0d0d13;border-top:0.5px solid rgba(255,255,255,0.05);border-bottom:0.5px solid rgba(255,255,255,0.05)}
+  .how-inner{max-width:1100px;margin:0 auto}
+  .steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:3rem;position:relative}
+  .steps-grid::before{content:'';position:absolute;top:28px;left:12.5%;right:12.5%;height:0.5px;background:rgba(55,138,221,0.18)}
+  .step{text-align:center;padding:0 1rem;position:relative}
+  .step-circle{width:56px;height:56px;border-radius:50%;background:#111118;border:0.5px solid rgba(55,138,221,0.28);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-family:'Sora',sans-serif;font-size:18px;font-weight:800;color:#378ADD;position:relative;z-index:1}
+  .step-title{font-size:14px;font-weight:600;margin-bottom:6px}
+  .step-desc{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6}
+
+  /* PROFISSIONAIS */
+  .filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem}
+  .filter-btn{font-size:12px;padding:6px 16px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.45);background:transparent;cursor:pointer;transition:all 0.2s}
+  .filter-btn:hover,.filter-btn.active{border-color:rgba(55,138,221,0.4);color:#378ADD;background:rgba(55,138,221,0.08)}
+  .pros-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .pro-card{background:#111118;border:0.5px solid rgba(255,255,255,0.07);border-radius:16px;padding:1.5rem;transition:all 0.2s}
+  .pro-card:hover{border-color:rgba(127,119,221,0.25);transform:translateY(-2px)}
+  .pro-header{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+  .pro-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+  .av-blue{background:rgba(55,138,221,0.15);color:#378ADD}
+  .av-purple{background:rgba(127,119,221,0.15);color:#7F77DD}
+  .av-teal{background:rgba(29,158,117,0.15);color:#1D9E75}
+  .av-coral{background:rgba(216,90,48,0.15);color:#D85A30}
+  .pro-name{font-size:14px;font-weight:600}
+  .pro-role{font-size:11px;color:rgba(255,255,255,0.38);margin-top:2px}
+  .pro-regiao{font-size:11px;color:rgba(55,138,221,0.7);margin-top:2px;font-weight:500}
+  .pro-bio{font-size:12px;color:rgba(255,255,255,0.42);line-height:1.6;margin-bottom:1rem}
+  .pro-stars{color:#EF9F27;font-size:12px;margin-bottom:0.75rem;letter-spacing:1px}
+  .pro-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:1rem}
+  .tag{font-size:11px;padding:3px 9px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.42)}
+  .pro-rate{font-size:15px;font-weight:700}
+  .pro-rate small{font-size:11px;font-weight:400;color:rgba(255,255,255,0.38)}
+  .pro-btn{display:block;text-align:center;margin-top:1rem;padding:9px;border-radius:8px;background:rgba(55,138,221,0.08);border:0.5px solid rgba(55,138,221,0.22);color:#378ADD;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;width:100%}
+  .pro-btn:hover{background:rgba(55,138,221,0.18)}
+
+  /* MAPA SP visual */
+  .sp-section{padding:5rem 4rem;background:#0d0d13;border-top:0.5px solid rgba(255,255,255,0.05)}
+  .sp-inner{max-width:1100px;margin:0 auto}
+  .sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;margin-top:3rem}
+  .sp-regioes-list{display:flex;flex-direction:column;gap:10px}
+  .sp-regiao-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#111118;border:0.5px solid rgba(255,255,255,0.07);border-radius:10px}
+  .sp-regiao-name{font-size:14px;font-weight:500}
+  .sp-regiao-count{font-size:12px;color:#378ADD;font-weight:600}
+  .sp-regiao-bar-wrap{flex:1;margin:0 1rem;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden}
+  .sp-regiao-bar{height:100%;background:linear-gradient(90deg,#185FA5,#378ADD);border-radius:2px}
+  .sp-note{margin-top:1.5rem;padding:1rem 1.25rem;background:rgba(55,138,221,0.06);border:0.5px solid rgba(55,138,221,0.18);border-radius:10px;font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6}
+  .sp-note strong{color:#378ADD;font-weight:500}
+
+  /* CTA */
+  .cta-section{padding:6rem 4rem;text-align:center;position:relative;overflow:hidden}
+  .cta-bg{position:absolute;inset:0;background:radial-gradient(ellipse 50% 80% at 50% 50%,rgba(127,119,221,0.09) 0%,transparent 70%);pointer-events:none}
+  .cta-inner{max-width:560px;margin:0 auto;position:relative;z-index:1}
+  .cta-title{font-family:'Sora',sans-serif;font-size:40px;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:1.25rem}
+  .cta-desc{font-size:15px;color:rgba(255,255,255,0.45);line-height:1.75;margin-bottom:2.5rem}
+  .cta-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+  /* FOOTER */
+  footer{padding:2rem 4rem;border-top:0.5px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between}
+  .footer-logo{font-family:'Sora',sans-serif;font-size:16px;font-weight:800}
+  .footer-logo span{color:#378ADD}
+  .footer-sp{font-size:11px;color:rgba(55,138,221,0.6);font-weight:500;margin-top:2px}
+  .footer-copy{font-size:12px;color:rgba(255,255,255,0.28)}
+  .footer-links{display:flex;gap:1.5rem}
+  .footer-links a{font-size:12px;color:rgba(255,255,255,0.28);text-decoration:none}
+  .footer-links a:hover{color:rgba(255,255,255,0.55)}
+
+  @media(max-width:768px){
+    nav{padding:1rem 1.5rem}
+    .nav-links{display:none}
+    .hero{padding:6rem 1.5rem 3rem}
+    .hero-title{font-size:34px}
+    .stats{gap:1.5rem;padding:2rem 1.5rem;flex-wrap:wrap}
+    .section,.how-section,.sp-section{padding:3rem 1.5rem}
+    .levels-grid,.pros-grid{grid-template-columns:1fr}
+    .steps-grid{grid-template-columns:1fr 1fr;gap:2rem}
+    .steps-grid::before{display:none}
+    .sp-grid{grid-template-columns:1fr}
+    .cta-section{padding:4rem 1.5rem}
+    .cta-title{font-size:28px}
+    footer{flex-direction:column;gap:1rem;text-align:center;padding:2rem 1.5rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-text">Bita<span>Hub</span></div>
+    <div class="nav-sp-badge">São Paulo</div>
+  </div>
+  <div class="nav-links">
+    <a href="#niveis">Serviços</a>
+    <a href="#como">Como funciona</a>
+    <a href="#profissionais">Profissionais</a>
+    <a href="#regioes">Regiões</a>
+  </div>
+  <a href="#cadastro" class="nav-cta">Contratar agora</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-ring hero-ring-1"></div>
+  <div class="hero-ring hero-ring-2"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      Disponível em São Paulo
+    </div>
+    <h1 class="hero-title">
+      Segurança que<br>
+      <span class="blue">conhece</span> a sua<br>
+      <span class="purple">comunidade</span>
+    </h1>
+    <p class="hero-desc">Profissionais de segurança com experiência real na comunidade judaica de São Paulo — para eventos, viagens e consultoria especializada.</p>
+    <div class="hero-actions">
+      <a href="#niveis" class="btn-primary">Contratar segurança</a>
+      <a href="#cadastro" class="btn-secondary">Sou profissional</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item">
+    <div class="stat-num">+<span>30</span></div>
+    <div class="stat-label">Profissionais em SP</div>
+    <div class="stat-sp">São Paulo e Grande SP</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num"><span>3</span></div>
+    <div class="stat-label">Níveis de serviço</div>
+    <div class="stat-sp">Do acompanhamento à consultoria</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num"><span>48</span>h</div>
+    <div class="stat-label">Aprovação de cadastro</div>
+    <div class="stat-sp">Verificação pela equipe</div>
+  </div>
+</div>
+
+<!-- NÍVEIS -->
+<section class="section" id="niveis">
+  <div class="section-label">Serviços</div>
+  <h2 class="section-title">Escolha o nível certo<br>para o seu evento</h2>
+  <p class="section-desc">Profissionais que conhecem a dinâmica da comunidade judaica paulistana — de bar mitzvahs a eventos corporativos.</p>
+  <div class="levels-grid">
+    <div class="level-card">
+      <div class="level-num">Nível 1</div>
+      <div class="level-name">Acompanhamento</div>
+      <div class="level-desc-text">Profissional presente no evento ou viagem com monitoramento contínuo e discrição.</div>
+      <div class="level-price">R$ 350 <small>/ diária</small></div>
+      <div class="level-features">
+        <div class="feat"><div class="feat-dot dot-blue"></div>Acompanhamento presencial</div>
+        <div class="feat"><div class="feat-dot dot-blue"></div>Monitoramento contínuo</div>
+        <div class="feat"><div class="feat-dot dot-blue"></div>Experiência na comunidade</div>
+        <div class="feat"><div class="feat-dot dot-blue"></div>WhatsApp liberado após pagamento</div>
+      </div>
+    </div>
+    <div class="level-card featured">
+      <div class="featured-badge">Mais solicitado em SP</div>
+      <div class="level-num">Nível 2</div>
+      <div class="level-name">Evento Completo</div>
+      <div class="level-desc-text">Equipe coordenada com briefing pré-evento e relatório completo pós-evento.</div>
+      <div class="level-price">R$ 850 <small>/ evento</small></div>
+      <div class="level-features">
+        <div class="feat"><div class="feat-dot dot-purple"></div>Tudo do Nível 1</div>
+        <div class="feat"><div class="feat-dot dot-purple"></div>Coordenação de equipe</div>
+        <div class="feat"><div class="feat-dot dot-purple"></div>Briefing pré-evento</div>
+        <div class="feat"><div class="feat-dot dot-purple"></div>Relatório pós-evento</div>
+      </div>
+    </div>
+    <div class="level-card">
+      <div class="level-num">Nível 3</div>
+      <div class="level-name">Consultoria</div>
+      <div class="level-desc-text">Consultor certificado para análise de risco e planejamento estratégico de segurança.</div>
+      <div class="level-price">R$ 2.400 <small>/ projeto</small></div>
+      <div class="level-features">
+        <div class="feat"><div class="feat-dot dot-teal"></div>Tudo do Nível 2</div>
+        <div class="feat"><div class="feat-dot dot-teal"></div>Análise de vulnerabilidade</div>
+        <div class="feat"><div class="feat-dot dot-teal"></div>Plano de contingência</div>
+        <div class="feat"><div class="feat-dot dot-teal"></div>Consultor com certificação</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<div class="how-section" id="como">
+  <div class="how-inner">
+    <div class="section-label">Como funciona</div>
+    <h2 class="section-title">Simples, rápido e seguro</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-circle">1</div>
+        <div class="step-title">Escolha o serviço</div>
+        <div class="step-desc">Selecione o nível ideal para o seu evento ou viagem em SP</div>
+      </div>
+      <div class="step">
+        <div class="step-circle">2</div>
+        <div class="step-title">Escolha o profissional</div>
+        <div class="step-desc">Veja perfis, avaliações e região de atuação em São Paulo</div>
+      </div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <div class="step-title">Pague com segurança</div>
+        <div class="step-desc">Mercado Pago — Pix, cartão ou boleto. Valor retido até confirmação</div>
+      </div>
+      <div class="step">
+        <div class="step-circle">4</div>
+        <div class="step-title">Conecte-se</div>
+        <div class="step-desc">WhatsApp liberado para alinhar todos os detalhes do serviço</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFISSIONAIS -->
+<section class="section" id="profissionais">
+  <div class="section-label">Profissionais</div>
+  <h2 class="section-title">Verificados e da comunidade</h2>
+  <p class="section-desc">Todos aprovados pela equipe BitaHub. Filtre por região de São Paulo.</p>
+  <div class="filter-row">
+    <button class="filter-btn active">Todos</button>
+    <button class="filter-btn">Higienópolis</button>
+    <button class="filter-btn">Jardins</button>
+    <button class="filter-btn">Moema</button>
+    <button class="filter-btn">Perdizes</button>
+    <button class="filter-btn">Grande SP</button>
+  </div>
+  <div class="pros-grid">
+    <div class="pro-card">
+      <div class="pro-header">
+        <div class="pro-avatar av-blue">DL</div>
+        <div>
+          <div class="pro-name">David Levi</div>
+          <div class="pro-role">Nível 1 · Acompanhamento</div>
+          <div class="pro-regiao">📍 Higienópolis</div>
+        </div>
+      </div>
+      <div class="pro-stars">★★★★★</div>
+      <div class="pro-bio">15 anos de experiência em segurança comunitária. Participou de eventos da Federação Israelita de SP por 8 anos.</div>
+      <div class="pro-tags">
+        <span class="tag">Eventos</span>
+        <span class="tag">Viagens</span>
+        <span class="tag">Bar Mitzvá</span>
+      </div>
+      <div class="pro-rate">R$ 350 <small>/ diária</small></div>
+      <button class="pro-btn">Ver perfil completo</button>
+    </div>
+    <div class="pro-card">
+      <div class="pro-header">
+        <div class="pro-avatar av-purple">RC</div>
+        <div>
+          <div class="pro-name">Rachel Cohen</div>
+          <div class="pro-role">Nível 3 · Consultora</div>
+          <div class="pro-regiao">📍 Jardins</div>
+        </div>
+      </div>
+      <div class="pro-stars">★★★★★</div>
+      <div class="pro-bio">Especialista em planejamento de segurança para sinagogas e eventos judaicos. Certificação internacional em gestão de risco.</div>
+      <div class="pro-tags">
+        <span class="tag">Consultoria</span>
+        <span class="tag">Planejamento</span>
+        <span class="tag">Sinagogas</span>
+      </div>
+      <div class="pro-rate">R$ 2.400 <small>/ projeto</small></div>
+      <button class="pro-btn">Ver perfil completo</button>
+    </div>
+    <div class="pro-card">
+      <div class="pro-header">
+        <div class="pro-avatar av-teal">MS</div>
+        <div>
+          <div class="pro-name">Marcos Sasson</div>
+          <div class="pro-role">Nível 2 · Coordenador</div>
+          <div class="pro-regiao">📍 Moema</div>
+        </div>
+      </div>
+      <div class="pro-stars">★★★★☆</div>
+      <div class="pro-bio">Ex-segurança da Federação Israelita de SP. Coordena equipes em eventos de médio e grande porte há 10 anos.</div>
+      <div class="pro-tags">
+        <span class="tag">Coordenação</span>
+        <span class="tag">Eventos grandes</span>
+      </div>
+      <div class="pro-rate">R$ 850 <small>/ evento</small></div>
+      <button class="pro-btn">Ver perfil completo</button>
+    </div>
+  </div>
+</section>
+
+<!-- REGIÕES SP -->
+<div class="sp-section" id="regioes">
+  <div class="sp-inner">
+    <div class="section-label">Cobertura em SP</div>
+    <h2 class="section-title">Onde o BitaHub atua</h2>
+    <div class="sp-grid">
+      <div class="sp-regioes-list">
+        <div class="sp-regiao-item">
+          <div class="sp-regiao-name">Higienópolis</div>
+          <div class="sp-regiao-bar-wrap"><div class="sp-regiao-bar" style="width:90%"></div></div>
+          <div class="sp-regiao-count">12 profissionais</div>
+        </div>
+        <div class="sp-regiao-item">
+          <div class="sp-regiao-name">Jardins / Itaim</div>
+          <div class="sp-regiao-bar-wrap"><div class="sp-regiao-bar" style="width:75%"></div></div>
+          <div class="sp-regiao-count">9 profissionais</div>
+        </div>
+        <div class="sp-regiao-item">
+          <div class="sp-regiao-name">Moema</div>
+          <div class="sp-regiao-bar-wrap"><div class="sp-regiao-bar" style="width:60%"></div></div>
+          <div class="sp-regiao-count">7 profissionais</div>
+        </div>
+        <div class="sp-regiao-item">
+          <div class="sp-regiao-name">Perdizes / Pompeia</div>
+          <div class="sp-regiao-bar-wrap"><div class="sp-regiao-bar" style="width:50%"></div></div>
+          <div class="sp-regiao-count">6 profissionais</div>
+        </div>
+        <div class="sp-regiao-item">
+          <div class="sp-regiao-name">Brooklin / V. Olímpia</div>
+          <div class="sp-regiao-bar-wrap"><div class="sp-regiao-bar" style="width:40%"></div></div>
+          <div class="sp-regiao-count">5 profissionais</div>
+        </div>
+        <div class="sp-regiao-item">
+          <div class="sp-regiao-name">Santo André / ABC</div>
+          <div class="sp-regiao-bar-wrap"><div class="sp-regiao-bar" style="width:30%"></div></div>
+          <div class="sp-regiao-count">4 profissionais</div>
+        </div>
+        <div class="sp-note">
+          Não encontrou profissional na sua região? <strong>Entre em contato</strong> — estamos expandindo a cobertura semanalmente.
+        </div>
+      </div>
+      <div style="background:#111118;border:0.5px solid rgba(255,255,255,0.07);border-radius:16px;padding:2rem;text-align:center">
+        <div style="font-size:13px;color:rgba(255,255,255,0.35);margin-bottom:1.5rem;letter-spacing:0.5px">LANÇAMENTO</div>
+        <div style="font-family:'Sora',sans-serif;font-size:48px;font-weight:800;color:#378ADD;line-height:1">SP</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:0.5rem;margin-bottom:2rem">São Paulo — Capital e Grande SP</div>
+        <div style="width:0.5px;height:40px;background:rgba(55,138,221,0.2);margin:0 auto 2rem"></div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.35);margin-bottom:0.5rem">Próximas cidades</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:13px;color:rgba(255,255,255,0.25);padding:8px;border:0.5px solid rgba(255,255,255,0.05);border-radius:8px">Campinas</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.25);padding:8px;border:0.5px solid rgba(255,255,255,0.05);border-radius:8px">Rio de Janeiro</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.25);padding:8px;border:0.5px solid rgba(255,255,255,0.05);border-radius:8px">Curitiba</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="cta-section" id="cadastro">
+  <div class="cta-bg"></div>
+  <div class="cta-inner">
+    <h2 class="cta-title">Pronto para o seu<br>próximo evento em SP?</h2>
+    <p class="cta-desc">Contrate em minutos. Profissionais verificados, pagamento seguro via Mercado Pago e suporte da comunidade.</p>
+    <div class="cta-actions">
+      <a href="#" class="btn-primary">Contratar agora</a>
+      <a href="#" class="btn-secondary">Quero ser profissional</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">Bita<span>Hub</span></div>
+    <div class="footer-sp">São Paulo · Comunidade Judaica</div>
+  </div>
+  <div class="footer-copy">© 2025 BitaHub. Todos os direitos reservados.</div>
+  <div class="footer-links">
+    <a href="#">Termos de uso</a>
+    <a href="#">Privacidade</a>
+    <a href="#">Contato</a>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.filter-btn').forEach(t=>{
+  t.addEventListener('click',function(){
+    document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
