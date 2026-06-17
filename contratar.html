@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BitaHub — Contratar Segurança</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; }
+  header { background: #1a1a2e; padding: 1rem 2rem; display: flex; align-items: center; gap: 12px; }
+  header h1 { color: #fff; font-size: 1.4rem; font-weight: 600; }
+  header span { color: #c9a84c; font-size: 1.1rem; }
+  .container { max-width: 680px; margin: 2rem auto; padding: 0 1rem; }
+  .card { background: #fff; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid #e0e0e0; }
+  .card h2 { font-size: 1rem; font-weight: 600; color: #1a1a2e; margin-bottom: 1rem; border-bottom: 2px solid #c9a84c; padding-bottom: 0.5rem; }
+  .niveis { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .nivel { border: 2px solid #e0e0e0; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .nivel:hover { border-color: #c9a84c; }
+  .nivel.selected { border-color: #1a1a2e; background: #1a1a2e; color: #fff; }
+  .nivel.selected .nivel-preco { color: #c9a84c; }
+  .nivel-nome { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+  .nivel-desc { font-size: 0.75rem; color: #666; margin-bottom: 8px; }
+  .nivel.selected .nivel-desc { color: #ccc; }
+  .nivel-preco { font-size: 0.85rem; font-weight: 600; color: #1a1a2e; }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; font-size: 0.85rem; font-weight: 500; color: #444; margin-bottom: 4px; }
+  .form-group input, .form-group textarea, .form-group select {
+    width: 100%; padding: 10px 12px; border: 1.5px solid #e0e0e0;
+    border-radius: 8px; font-size: 0.95rem; transition: border 0.2s;
+    font-family: inherit;
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    outline: none; border-color: #1a1a2e;
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .valor-box { background: #f5f5f0; border-radius: 8px; padding: 1rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .valor-box span { font-size: 0.9rem; color: #666; }
+  .valor-box strong { font-size: 1.3rem; color: #1a1a2e; }
+  .btn-pagar { width: 100%; background: #009ee3; color: #fff; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+  .btn-pagar:hover { background: #0080c0; }
+  .btn-pagar:disabled { background: #ccc; cursor: not-allowed; }
+  .aviso { font-size: 0.8rem; color: #888; text-align: center; margin-top: 8px; }
+  .loading { display: none; text-align: center; padding: 1rem; color: #666; }
+  .estrela { color: #c9a84c; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Bita<span>Hub</span></h1>
+  <span style="color:#fff; font-size:0.9rem;">✡ Segurança para a Comunidade Judaica</span>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>✦ Escolha o Nível de Serviço</h2>
+    <div class="niveis">
+      <div class="nivel" onclick="selecionarNivel(this, 'Acompanhamento', 500)">
+        <div class="nivel-nome">Nível 1</div>
+        <div class="nivel-desc">Acompanhamento em evento ou viagem</div>
+        <div class="nivel-preco">A partir de R$ 300</div>
+      </div>
+      <div class="nivel" onclick="selecionarNivel(this, 'Consultoria', 1200)">
+        <div class="nivel-nome">Nível 2</div>
+        <div class="nivel-desc">Consultoria e análise de riscos</div>
+        <div class="nivel-preco">A partir de R$ 800</div>
+      </div>
+      <div class="nivel" onclick="selecionarNivel(this, 'Planejamento', 3000)">
+        <div class="nivel-nome">Nível 3</div>
+        <div class="nivel-desc">Planejamento completo com consultor certificado</div>
+        <div class="nivel-preco">A partir de R$ 2.000</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>✦ Seus Dados</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nome completo *</label>
+        <input type="text" id="clientName" placeholder="Seu nome">
+      </div>
+      <div class="form-group">
+        <label>E-mail *</label>
+        <input type="email" id="clientEmail" placeholder="seu@email.com">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>WhatsApp *</label>
+        <input type="tel" id="clientPhone" placeholder="11999999999">
+      </div>
+      <div class="form-group">
+        <label>Data do evento *</label>
+        <input type="date" id="eventDate">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Descrição do evento *</label>
+      <textarea id="eventDescription" rows="3" placeholder="Descreva o evento, local e o que precisa..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Valor combinado (R$) *</label>
+      <input type="number" id="agreedPrice" placeholder="Ex: 500" min="100">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>✦ Resumo</h2>
+    <div class="valor-box">
+      <span id="resumoNivel">Selecione um nível acima</span>
+      <strong id="resumoValor">R$ —</strong>
+    </div>
+    <p class="aviso">💳 Pagamento 100% seguro via Mercado Pago · 10% de taxa de plataforma</p>
+    <br>
+    <button class="btn-pagar" id="btnPagar" onclick="iniciarPagamento()">
+      Pagar com Mercado Pago
+    </button>
+    <div class="loading" id="loading">⏳ Gerando link de pagamento...</div>
+    <p class="aviso" style="margin-top:8px;">Após o pagamento, você e o profissional receberão confirmação via WhatsApp</p>
+  </div>
+
+</div>
+
+<script>
+let nivelSelecionado = null;
+
+function selecionarNivel(el, nome, preco) {
+  document.querySelectorAll('.nivel').forEach(n => n.classList.remove('selected'));
+  el.classList.add('selected');
+  nivelSelecionado = nome;
+  document.getElementById('resumoNivel').textContent = 'Nível: ' + nome;
+  if (!document.getElementById('agreedPrice').value) {
+    document.getElementById('agreedPrice').value = preco;
+  }
+  atualizarResumo();
+}
+
+function atualizarResumo() {
+  const val = document.getElementById('agreedPrice').value;
+  if (val) {
+    document.getElementById('resumoValor').textContent = 'R$ ' + parseFloat(val).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+  }
+}
+
+document.getElementById('agreedPrice').addEventListener('input', atualizarResumo);
+
+async function iniciarPagamento() {
+  const nome = document.getElementById('clientName').value.trim();
+  const email = document.getElementById('clientEmail').value.trim();
+  const phone = document.getElementById('clientPhone').value.trim();
+  const date = document.getElementById('eventDate').value;
+  const desc = document.getElementById('eventDescription').value.trim();
+  const price = document.getElementById('agreedPrice').value;
+
+  if (!nivelSelecionado || !nome || !email || !phone || !date || !desc || !price) {
+    alert('Por favor, preencha todos os campos e selecione um nível de serviço.');
+    return;
+  }
+
+  const btn = document.getElementById('btnPagar');
+  const loading = document.getElementById('loading');
+  btn.disabled = true;
+  loading.style.display = 'block';
+
+  try {
+    const resp = await fetch('/api/create-preference', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        professionalId: new URLSearchParams(window.location.search).get('prof') || 'sem-id',
+        serviceLevel: nivelSelecionado,
+        agreedPrice: parseFloat(price),
+        clientName: nome,
+        clientEmail: email,
+        clientPhone: phone,
+        eventDate: date,
+        eventDescription: desc
+      })
+    });
+
+    const data = await resp.json();
+
+    if (data.initPoint) {
+      window.location.href = data.initPoint;
+    } else {
+      throw new Error(data.error || 'Erro ao gerar pagamento');
+    }
+  } catch (err) {
+    alert('Erro: ' + err.message);
+    btn.disabled = false;
+    loading.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>
