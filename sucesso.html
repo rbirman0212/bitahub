@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BitaHub — Pagamento Confirmado</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; min-height: 100vh; display: flex; flex-direction: column; }
+  header { background: #1a1a2e; padding: 1rem 2rem; display: flex; align-items: center; gap: 12px; }
+  header h1 { color: #fff; font-size: 1.4rem; font-weight: 600; }
+  header span { color: #c9a84c; }
+  .container { max-width: 580px; margin: 3rem auto; padding: 0 1rem; text-align: center; }
+  .icone { font-size: 4rem; margin-bottom: 1rem; }
+  .titulo { font-size: 1.8rem; font-weight: 700; color: #1a1a2e; margin-bottom: 0.5rem; }
+  .subtitulo { font-size: 1rem; color: #666; margin-bottom: 2rem; line-height: 1.6; }
+  .card { background: #fff; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; border: 1px solid #e0e0e0; text-align: left; }
+  .card h3 { font-size: 0.9rem; font-weight: 600; color: #1a1a2e; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+  .info-row:last-child { border-bottom: none; }
+  .info-row span:first-child { color: #666; }
+  .info-row span:last-child { font-weight: 500; color: #1a1a2e; }
+  .btn { display: block; width: 100%; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; border: none; margin-bottom: 12px; text-decoration: none; text-align: center; transition: opacity 0.2s; }
+  .btn:hover { opacity: 0.9; }
+  .btn-whatsapp { background: #25D366; color: #fff; }
+  .btn-home { background: #1a1a2e; color: #fff; }
+  .aviso { font-size: 0.8rem; color: #999; margin-top: 1rem; line-height: 1.5; }
+  .selo { display: inline-flex; align-items: center; gap: 6px; background: #e8f5e9; color: #2e7d32; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; margin-bottom: 1.5rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Bita<span>Hub</span></h1>
+  <span style="color:#fff; font-size:0.9rem;">✡ Segurança para a Comunidade Judaica</span>
+</header>
+
+<div class="container">
+  <div class="icone">✅</div>
+  <div class="selo">🔒 Pagamento confirmado</div>
+  <h1 class="titulo">Contratação realizada!</h1>
+  <p class="subtitulo">Seu pagamento foi aprovado com sucesso.<br>O profissional receberá seus dados e entrará em contato em breve.</p>
+
+  <div class="card">
+    <h3>📋 Resumo da contratação</h3>
+    <div class="info-row">
+      <span>Status</span>
+      <span style="color:#2e7d32;">✅ Pago</span>
+    </div>
+    <div class="info-row">
+      <span>Serviço</span>
+      <span id="infoServico">—</span>
+    </div>
+    <div class="info-row">
+      <span>Valor pago</span>
+      <span id="infoValor">—</span>
+    </div>
+    <div class="info-row">
+      <span>Data do evento</span>
+      <span id="infoData">—</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📱 Próximo passo</h3>
+    <p style="font-size:0.9rem; color:#444; margin-bottom:1rem; line-height:1.6;">
+      Clique abaixo para enviar uma mensagem diretamente ao profissional e confirmar os detalhes do serviço.
+    </p>
+    <a class="btn btn-whatsapp" id="btnWhatsapp" href="#" target="_blank">
+      💬 Falar com o profissional no WhatsApp
+    </a>
+  </div>
+
+  <a class="btn btn-home" href="/">Voltar para o início</a>
+
+  <p class="aviso">
+    Dúvidas? Entre em contato: contato@bitahub.com.br<br>
+    BitaHub — Plataforma de Segurança para a Comunidade Judaica
+  </p>
+</div>
+
+<script>
+  // Pega parâmetros da URL que o Mercado Pago envia
+  const params = new URLSearchParams(window.location.search);
+  const paymentId = params.get('payment_id');
+  const status = params.get('status');
+  const extRef = params.get('external_reference') || '';
+
+  // Preenche informações da URL
+  const partes = extRef.split('|');
+  const profPhone = partes[1] || '';
+  const eventDate = partes[2] || '';
+
+  if (eventDate) {
+    const d = new Date(eventDate + 'T12:00:00');
+    document.getElementById('infoData').textContent =
+      d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+  }
+
+  // Pega dados salvos no sessionStorage (preenchidos na página contratar)
+  const nivel = sessionStorage.getItem('bita_nivel') || 'Segurança';
+  const valor = sessionStorage.getItem('bita_valor') || '';
+  const descricao = sessionStorage.getItem('bita_descricao') || 'Serviço de segurança';
+  const clientName = sessionStorage.getItem('bita_nome') || '';
+
+  document.getElementById('infoServico').textContent = nivel;
+  if (valor) {
+    document.getElementById('infoValor').textContent =
+      'R$ ' + parseFloat(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+  }
+
+  // Monta link do WhatsApp para o profissional
+  if (profPhone) {
+    const msg = encodeURIComponent(
+      `Olá! Sou ${clientName} e acabei de contratar seu serviço de segurança pelo BitaHub.\n` +
+      `Serviço: ${nivel}\nEvento: ${descricao}\nData: ${eventDate}\n` +
+      `ID do pagamento: ${paymentId || 'em processamento'}\n\nVamos combinar os detalhes?`
+    );
+    document.getElementById('btnWhatsapp').href = `https://wa.me/55${profPhone}?text=${msg}`;
+  } else {
+    document.getElementById('btnWhatsapp').href = 'https://wa.me/5511999999999?text=Olá, acabei de fazer uma contratação no BitaHub!';
+  }
+</script>
+
+</body>
+</html>
