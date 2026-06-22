@@ -42,8 +42,6 @@
   .btn-secondary{background:transparent;color:#fff;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:500;text-decoration:none;border:0.5px solid rgba(255,255,255,0.18);transition:all 0.2s;cursor:pointer;display:inline-block}
   .btn-secondary:hover{border-color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.04)}
 
-
-
   /* STATS */
   .stats{display:flex;justify-content:center;gap:4rem;padding:2.5rem 4rem;border-top:0.5px solid rgba(255,255,255,0.06);border-bottom:0.5px solid rgba(255,255,255,0.06)}
   .stat-item{text-align:center}
@@ -108,7 +106,7 @@
   .tag{font-size:11px;padding:3px 9px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.42)}
   .pro-rate{font-size:15px;font-weight:700}
   .pro-rate small{font-size:11px;font-weight:400;color:rgba(255,255,255,0.38)}
-  .pro-btn{display:block;text-align:center;margin-top:1rem;padding:9px;border-radius:8px;background:rgba(55,138,221,0.08);border:0.5px solid rgba(55,138,221,0.22);color:#378ADD;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;width:100%}
+  .pro-btn{display:block;text-align:center;margin-top:1rem;padding:9px;border-radius:8px;background:rgba(55,138,221,0.08);border:0.5px solid rgba(55,138,221,0.22);color:#378ADD;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;width:100%;text-decoration:none}
   .pro-btn:hover{background:rgba(55,138,221,0.18)}
 
   /* MAPA SP visual */
@@ -307,9 +305,9 @@
     <button class="filter-btn">Perdizes</button>
     <button class="filter-btn">Grande SP</button>
   </div>
-<div class="pros-grid" id="pros-grid">
-  <div style="text-align:center;padding:2rem;color:#666;">Carregando profissionais...</div>
-</div>
+  <div class="pros-grid" id="pros-grid">
+    <div style="text-align:center;padding:2rem;color:#666;">Carregando profissionais...</div>
+  </div>
 </section>
 
 <script>
@@ -327,7 +325,9 @@ async function carregarProfissionais() {
     grid.innerHTML = data.profissionais.map(p => {
       const iniciais = p.nome ? p.nome.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() : '??';
       const valor = p.valor_diaria ? `R$ ${Number(p.valor_diaria).toLocaleString('pt-BR')}` : 'Consultar';
-      const foto = p.foto_url ? `<img src="${p.foto_url}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">` : `<div class="pro-avatar av-blue">${iniciais}</div>`;
+      const foto = p.foto_url
+        ? `<img src="${p.foto_url}" style="width:46px;height:46px;border-radius:50%;object-fit:cover;flex-shrink:0;">`
+        : `<div class="pro-avatar av-blue">${iniciais}</div>`;
       return `
         <div class="pro-card">
           <div class="pro-header">
@@ -339,9 +339,9 @@ async function carregarProfissionais() {
             </div>
           </div>
           <div class="pro-stars">★★★★★</div>
-          <div class="pro-bio">${p.apresentacao || ''}</div>
-          <div class="pro-price">${valor} <span>/ diária</span></div>
-          <a href="/contratar?prof=${p.id}" class="pro-btn ver-perfil-btn">Contratar agora</a>
+          <div class="pro-bio">${(p.apresentacao || '').substring(0, 100)}${p.apresentacao && p.apresentacao.length > 100 ? '…' : ''}</div>
+          <div class="pro-rate">${valor} <small>/ diária</small></div>
+          <a href="/profissional.html?id=${p.id}" class="pro-btn">Ver perfil completo →</a>
         </div>
       `;
     }).join('');
@@ -417,8 +417,8 @@ carregarProfissionais();
     <h2 class="cta-title">Pronto para o seu<br>próximo evento em SP?</h2>
     <p class="cta-desc">Contrate em minutos. Profissionais verificados, pagamento seguro via Mercado Pago e suporte da comunidade.</p>
     <div class="cta-actions">
-      <a href="#" class="btn-primary">Contratar agora</a>
-      <a href="#" class="btn-secondary">Quero ser profissional</a>
+      <a href="#profissionais" class="btn-primary">Contratar agora</a>
+      <a href="/bitahub-cadastro-final.html" class="btn-secondary">Quero ser profissional</a>
     </div>
   </div>
 </section>
