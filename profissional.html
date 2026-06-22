@@ -703,8 +703,9 @@
     });
 
     /* Valor */
+    const valor = prof.valor || prof.valor_diaria;
     document.getElementById('cta-valor').innerHTML =
-      `${formatValor(prof.valor)}<span> / evento</span>`;
+      `${formatValor(valor)}<span> / evento</span>`;
 
     /* Info detalhes */
     document.getElementById('info-regiao').textContent = prof.regiao || 'São Paulo e Grande SP';
