@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BitaHub — Perfil do Profissional</title>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --azul:       #1A3A5C;
+      --azul-meio:  #1E5799;
+      --dourado:    #C8A84B;
+      --dourado-lt: #F5EDD6;
+      --cinza-bg:   #F4F6F9;
+      --cinza-borda:#DDE1E8;
+      --texto:      #1C2533;
+      --texto-2:    #5A6475;
+      --branco:     #FFFFFF;
+      --verde:      #1A6B3C;
+      --verde-bg:   #E8F5EE;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--cinza-bg);
+      color: var(--texto);
+      min-height: 100vh;
+    }
+
+    /* ── NAV ─────────────────────────────────────── */
+    nav {
+      background: var(--azul);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo .estrela {
+      font-size: 22px;
+      color: var(--dourado);
+    }
+
+    .nav-logo span {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--branco);
+      letter-spacing: 0.5px;
+    }
+
+    .nav-logo span em {
+      font-style: normal;
+      color: var(--dourado);
+    }
+
+    .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .nav-back:hover { color: var(--branco); }
+
+    /* ── ESTADOS ─────────────────────────────────── */
+    #loading-state, #error-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      gap: 1rem;
+    }
+
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--cinza-borda);
+      border-top-color: var(--azul-meio);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text { color: var(--texto-2); font-size: 15px; }
+
+    .error-icon { font-size: 48px; }
+    .error-title { font-size: 20px; font-weight: 600; color: var(--texto); }
+    .error-sub { color: var(--texto-2); font-size: 14px; text-align: center; max-width: 340px; }
+
+    /* ── LAYOUT PRINCIPAL ────────────────────────── */
+    #perfil-content { display: none; }
+
+    .perfil-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    /* ── HERO CARD ───────────────────────────────── */
+    .hero-card {
+      background: var(--branco);
+      border-radius: 16px;
+      border: 1px solid var(--cinza-borda);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-banner {
+      height: 120px;
+      background: linear-gradient(135deg, var(--azul) 0%, var(--azul-meio) 60%, #2874C0 100%);
+      position: relative;
+    }
+
+    .hero-banner::after {
+      content: '✡';
+      position: absolute;
+      right: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 64px;
+      color: rgba(255,255,255,0.08);
+      pointer-events: none;
+    }
+
+    .hero-body {
+      padding: 0 2rem 2rem;
+      position: relative;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      display: inline-block;
+      margin-top: -52px;
+      margin-bottom: 1rem;
+    }
+
+    .avatar {
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      border: 4px solid var(--branco);
+      object-fit: cover;
+      background: var(--cinza-bg);
+      display: block;
+    }
+
+    .avatar-placeholder {
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      border: 4px solid var(--branco);
+      background: var(--azul);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--branco);
+    }
+
+    .badge-nivel {
+      position: absolute;
+      bottom: 4px;
+      right: 0;
+      background: var(--dourado);
+      color: #5C3D00;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+      border: 2px solid var(--branco);
+    }
+
+    .hero-info {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .hero-info-left h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--texto);
+      line-height: 1.2;
+    }
+
+    .hero-info-left .subtitulo {
+      color: var(--texto-2);
+      font-size: 15px;
+      margin-top: 4px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      background: var(--cinza-bg);
+      border: 1px solid var(--cinza-borda);
+      color: var(--texto-2);
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .tag.destaque {
+      background: var(--dourado-lt);
+      border-color: var(--dourado);
+      color: #7A5500;
+    }
+
+    /* ── VALOR + CTA ─────────────────────────────── */
+    .cta-box {
+      background: var(--cinza-bg);
+      border: 1px solid var(--cinza-borda);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      min-width: 220px;
+      text-align: center;
+    }
+
+    .cta-label { font-size: 12px; color: var(--texto-2); margin-bottom: 4px; }
+
+    .cta-valor {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--azul);
+      line-height: 1.1;
+    }
+
+    .cta-valor span {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--texto-2);
+    }
+
+    .cta-info {
+      font-size: 11px;
+      color: var(--texto-2);
+      margin: 6px 0 14px;
+    }
+
+    .btn-contratar {
+      display: block;
+      width: 100%;
+      background: var(--dourado);
+      color: #3D2600;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-contratar:hover { background: #b5922e; }
+    .btn-contratar:active { transform: scale(0.98); }
+
+    .btn-wpp {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: 100%;
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--cinza-borda);
+      background: var(--branco);
+      font-size: 13px;
+      color: var(--verde);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .btn-wpp:hover { background: var(--verde-bg); }
+
+    /* ── SEÇÕES ──────────────────────────────────── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 720px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .hero-info { flex-direction: column; }
+      .cta-box { min-width: unset; width: 100%; }
+      .hero-body { padding: 0 1.25rem 1.5rem; }
+      nav { padding: 0 1.25rem; }
+    }
+
+    .section-card {
+      background: var(--branco);
+      border: 1px solid var(--cinza-borda);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--texto-2);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--cinza-borda);
+    }
+
+    .bio-text {
+      font-size: 15px;
+      color: var(--texto);
+      line-height: 1.75;
+    }
+
+    /* ── NÍVEL DE SERVIÇO ────────────────────────── */
+    .nivel-card {
+      border: 1px solid var(--cinza-borda);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      margin-bottom: 0.75rem;
+      transition: border-color 0.2s;
+    }
+
+    .nivel-card.ativo {
+      border-color: var(--dourado);
+      background: var(--dourado-lt);
+    }
+
+    .nivel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .nivel-nome {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--texto);
+    }
+
+    .nivel-ativo-badge {
+      font-size: 10px;
+      font-weight: 700;
+      background: var(--dourado);
+      color: #5C3D00;
+      padding: 2px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .nivel-desc {
+      font-size: 13px;
+      color: var(--texto-2);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* ── SIDEBAR STICKY ──────────────────────────── */
+    .sidebar-sticky {
+      position: sticky;
+      top: 80px;
+    }
+
+    /* ── FOOTER ──────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 13px;
+      color: var(--texto-2);
+      border-top: 1px solid var(--cinza-borda);
+      background: var(--branco);
+    }
+
+    footer strong { color: var(--azul); }
+
+    /* ── INFO ROWS ───────────────────────────────── */
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--cinza-borda);
+      font-size: 14px;
+    }
+
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .info-row .icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--cinza-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .info-row .label { color: var(--texto-2); font-size: 12px; }
+    .info-row .valor { font-weight: 600; color: var(--texto); font-size: 14px; }
+
+    /* ── APROVADO BADGE ──────────────────────────── */
+    .aprovado-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--verde-bg);
+      border: 1px solid #A8D9BA;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--verde);
+      font-weight: 600;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">
+    <span class="estrela">✡</span>
+    <span>Bita<em>Hub</em></span>
+  </a>
+  <a href="/bitahub-home.html" class="nav-back">
+    ← Ver todos os profissionais
+  </a>
+</nav>
+
+<!-- LOADING -->
+<div id="loading-state">
+  <div class="spinner"></div>
+  <p class="loading-text">Carregando perfil…</p>
+</div>
+
+<!-- ERRO -->
+<div id="error-state" style="display:none">
+  <div class="error-icon">🔒</div>
+  <p class="error-title">Profissional não encontrado</p>
+  <p class="error-sub">O perfil que você está buscando não existe ou ainda não foi aprovado pela plataforma.</p>
+  <a href="/bitahub-home.html" style="margin-top:1rem;display:inline-block;padding:10px 24px;background:var(--azul);color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;">
+    Ver profissionais disponíveis
+  </a>
+</div>
+
+<!-- CONTEÚDO -->
+<div id="perfil-content">
+  <div class="perfil-wrap">
+
+    <!-- HERO CARD -->
+    <div class="hero-card">
+      <div class="hero-banner"></div>
+      <div class="hero-body">
+
+        <div class="avatar-wrap">
+          <div id="avatar-container"></div>
+          <div class="badge-nivel" id="badge-nivel">—</div>
+        </div>
+
+        <div class="hero-info">
+          <div class="hero-info-left">
+            <h1 id="nome-prof">—</h1>
+            <p class="subtitulo" id="subtitulo-prof">Profissional de segurança · Comunidade Judaica de SP</p>
+            <div class="tags" id="tags-prof"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- GRID -->
+    <div class="grid-2">
+
+      <!-- COLUNA ESQUERDA -->
+      <div>
+
+        <!-- BIO -->
+        <div class="section-card">
+          <div class="section-title">Apresentação</div>
+          <p class="bio-text" id="bio-prof">—</p>
+        </div>
+
+        <!-- NÍVEIS DE SERVIÇO -->
+        <div class="section-card">
+          <div class="section-title">Níveis de serviço</div>
+
+          <div class="nivel-card" id="nivel-acompanhamento">
+            <div class="nivel-header">
+              <span class="nivel-nome">🛡️ Acompanhamento</span>
+            </div>
+            <p class="nivel-desc">Presença discreta e segura para eventos, shabbats, datas comemorativas e deslocamentos na cidade.</p>
+          </div>
+
+          <div class="nivel-card" id="nivel-consultoria">
+            <div class="nivel-header">
+              <span class="nivel-nome">📋 Consultoria</span>
+            </div>
+            <p class="nivel-desc">Análise de vulnerabilidades, briefing de segurança e recomendações preventivas para seu evento ou viagem.</p>
+          </div>
+
+          <div class="nivel-card" id="nivel-planejamento">
+            <div class="nivel-header">
+              <span class="nivel-nome">🎯 Planejamento estratégico</span>
+            </div>
+            <p class="nivel-desc">Elaboração completa do plano de segurança: rotas, equipe, protocolos e simulações. Exige formação certificada.</p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- COLUNA DIREITA (SIDEBAR) -->
+      <div class="sidebar-sticky">
+
+        <!-- CTA -->
+        <div class="cta-box" style="margin-bottom:1rem;background:#fff;border:1px solid var(--cinza-borda);border-radius:16px;padding:1.5rem;">
+          <p class="cta-label">Valor por evento / diária</p>
+          <div class="cta-valor" id="cta-valor">R$ —<span> / evento</span></div>
+          <p class="cta-info">10% de taxa de plataforma incluída · Pagamento seguro via Mercado Pago</p>
+
+          <a id="btn-contratar" href="#" class="btn-contratar">
+            Contratar agora
+          </a>
+
+          <a id="btn-wpp" href="#" class="btn-wpp" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.99.578 3.842 1.577 5.396L2 22l4.765-1.548A9.952 9.952 0 0012 22c5.523 0 10-4.477 10-10S17.522 2 11.999 2zm0 18c-1.63 0-3.15-.453-4.44-1.237l-.318-.191-3.303 1.073 1.096-3.213-.209-.332A7.944 7.944 0 014 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/>
+            </svg>
+            Falar pelo WhatsApp
+          </a>
+
+          <div class="aprovado-strip">
+            ✅ Profissional verificado pela BitaHub
+          </div>
+        </div>
+
+        <!-- INFORMAÇÕES -->
+        <div class="section-card" style="margin-bottom:1rem;">
+          <div class="section-title">Detalhes</div>
+
+          <div class="info-row">
+            <div class="icon">📍</div>
+            <div>
+              <div class="label">Região de atuação</div>
+              <div class="valor" id="info-regiao">São Paulo e Grande SP</div>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <div class="icon">🏅</div>
+            <div>
+              <div class="label">Nível de serviço</div>
+              <div class="valor" id="info-nivel">—</div>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <div class="icon">🕍</div>
+            <div>
+              <div class="label">Comunidade</div>
+              <div class="valor">Comunidade Judaica de SP</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- NOTA DE SEGURANÇA -->
+        <div style="background:var(--dourado-lt);border:1px solid var(--dourado);border-radius:12px;padding:1rem 1.1rem;">
+          <p style="font-size:12px;color:#7A5500;font-weight:600;margin-bottom:4px;">🔒 Plataforma segura</p>
+          <p style="font-size:12px;color:#8A6010;line-height:1.5;">Todos os profissionais são verificados e aprovados manualmente pela equipe BitaHub antes de aparecerem na plataforma.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>BitaHub</strong> · Segurança para a comunidade judaica de São Paulo<br>
+  <span style="font-size:12px;margin-top:4px;display:block;">Pagamentos processados com segurança pelo Mercado Pago</span>
+</footer>
+
+<script>
+  /* ─── CONFIGURAÇÃO SUPABASE ───────────────────── */
+  /* !! Substitua pelos seus valores reais !! */
+  const SUPABASE_URL = 'https://mbeseudygnbmicxyhhoh.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_ncv2NBhaSFmnzkvKHpNu2w_3nZrwqGz'; // chave anon pública — segura expor no frontend
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  /* ─── NOMES DOS NÍVEIS ────────────────────────── */
+  const NIVEIS = {
+    acompanhamento: 'Acompanhamento',
+    consultoria:    'Consultoria',
+    planejamento:   'Planejamento estratégico',
+  };
+
+  /* ─── LÊ O ID DA URL ─────────────────────────── */
+  function getIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id');
+  }
+
+  /* ─── MOSTRA / ESCONDE ESTADOS ───────────────── */
+  function showState(state) {
+    document.getElementById('loading-state').style.display  = state === 'loading' ? 'flex' : 'none';
+    document.getElementById('error-state').style.display    = state === 'error'   ? 'flex' : 'none';
+    document.getElementById('perfil-content').style.display = state === 'ok'      ? 'block' : 'none';
+  }
+
+  /* ─── FORMATA VALOR ──────────────────────────── */
+  function formatValor(v) {
+    if (!v) return '—';
+    return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 });
+  }
+
+  /* ─── POPULA A PÁGINA ────────────────────────── */
+  function populaPagina(prof) {
+    document.title = `BitaHub — ${prof.nome}`;
+
+    /* Avatar */
+    const avatarContainer = document.getElementById('avatar-container');
+    if (prof.foto_url) {
+      avatarContainer.innerHTML = `<img src="${prof.foto_url}" alt="Foto de ${prof.nome}" class="avatar" onerror="this.parentNode.innerHTML=iniciais('${prof.nome}')">`;
+    } else {
+      avatarContainer.innerHTML = iniciais(prof.nome);
+    }
+
+    /* Badge do nível */
+    const nivelKey  = (prof.nivel_servico || '').toLowerCase();
+    const nivelNome = NIVEIS[nivelKey] || prof.nivel_servico || 'Profissional';
+    document.getElementById('badge-nivel').textContent = nivelNome;
+
+    /* Nome e subtítulo */
+    document.getElementById('nome-prof').textContent = prof.nome || '—';
+
+    /* Tags */
+    const tagsEl = document.getElementById('tags-prof');
+    const tags = [
+      nivelNome,
+      prof.especialidade || null,
+      prof.regiao || 'São Paulo'
+    ].filter(Boolean);
+
+    tagsEl.innerHTML = tags.map((t, i) =>
+      `<span class="tag${i === 0 ? ' destaque' : ''}">${t}</span>`
+    ).join('');
+
+    /* Bio */
+    document.getElementById('bio-prof').textContent =
+      prof.apresentacao || prof.bio || 'Este profissional ainda não adicionou uma apresentação.';
+
+    /* Destacar nível ativo */
+    ['acompanhamento', 'consultoria', 'planejamento'].forEach(n => {
+      const el = document.getElementById(`nivel-${n}`);
+      if (nivelKey.includes(n)) {
+        el.classList.add('ativo');
+        el.querySelector('.nivel-header').insertAdjacentHTML('beforeend',
+          `<span class="nivel-ativo-badge">Oferecido</span>`);
+      }
+    });
+
+    /* Valor */
+    document.getElementById('cta-valor').innerHTML =
+      `${formatValor(prof.valor)}<span> / evento</span>`;
+
+    /* Info detalhes */
+    document.getElementById('info-regiao').textContent = prof.regiao || 'São Paulo e Grande SP';
+    document.getElementById('info-nivel').textContent  = nivelNome;
+
+    /* Botão contratar */
+    const btnContratar = document.getElementById('btn-contratar');
+    btnContratar.href = `/contratar.html?id=${prof.id}`;
+
+    /* WhatsApp — usa o telefone do profissional se existir,
+       senão abre o número da plataforma (ajuste conforme necessário) */
+    const telPlataforma = '5511999999999';
+    const tel = prof.telefone
+      ? prof.telefone.replace(/\D/g, '')
+      : telPlataforma;
+    const msgWpp = encodeURIComponent(
+      `Olá! Vi o perfil de *${prof.nome}* na BitaHub e gostaria de saber mais sobre os serviços de segurança.`
+    );
+    document.getElementById('btn-wpp').href =
+      `https://wa.me/${tel}?text=${msgWpp}`;
+
+    showState('ok');
+  }
+
+  /* ─── INICIAIS PARA AVATAR ───────────────────── */
+  function iniciais(nome) {
+    if (!nome) return `<div class="avatar-placeholder">?</div>`;
+    const partes = nome.trim().split(' ');
+    const ini = partes.length >= 2
+      ? partes[0][0] + partes[partes.length - 1][0]
+      : partes[0].substring(0, 2);
+    return `<div class="avatar-placeholder">${ini.toUpperCase()}</div>`;
+  }
+
+  /* ─── BUSCA NO SUPABASE ──────────────────────── */
+  async function carregarPerfil() {
+    const id = getIdFromUrl();
+
+    if (!id) {
+      showState('error');
+      return;
+    }
+
+    try {
+      const { data, error } = await db
+        .from('colaboradores')
+        .select('*')
+        .eq('id', id)
+        .eq('status', 'aprovado')   /* só exibe aprovados */
+        .single();
+
+      if (error || !data) {
+        showState('error');
+        return;
+      }
+
+      populaPagina(data);
+
+    } catch (e) {
+      console.error('Erro ao carregar perfil:', e);
+      showState('error');
+    }
+  }
+
+  carregarPerfil();
+</script>
+</body>
+</html>
