@@ -307,65 +307,51 @@
     <button class="filter-btn">Perdizes</button>
     <button class="filter-btn">Grande SP</button>
   </div>
-  <div class="pros-grid">
-    <div class="pro-card">
-      <div class="pro-header">
-        <div class="pro-avatar av-blue">DL</div>
-        <div>
-          <div class="pro-name">David Levi</div>
-          <div class="pro-role">Nível 1 · Acompanhamento</div>
-          <div class="pro-regiao">📍 Higienópolis</div>
-        </div>
-      </div>
-      <div class="pro-stars">★★★★★</div>
-      <div class="pro-bio">15 anos de experiência em segurança comunitária. Participou de eventos da Federação Israelita de SP por 8 anos.</div>
-      <div class="pro-tags">
-        <span class="tag">Eventos</span>
-        <span class="tag">Viagens</span>
-        <span class="tag">Bar Mitzvá</span>
-      </div>
-      <div class="pro-rate">R$ 350 <small>/ diária</small></div>
-      <button class="pro-btn">Ver perfil completo</button>
-    </div>
-    <div class="pro-card">
-      <div class="pro-header">
-        <div class="pro-avatar av-purple">RC</div>
-        <div>
-          <div class="pro-name">Rachel Cohen</div>
-          <div class="pro-role">Nível 3 · Consultora</div>
-          <div class="pro-regiao">📍 Jardins</div>
-        </div>
-      </div>
-      <div class="pro-stars">★★★★★</div>
-      <div class="pro-bio">Especialista em planejamento de segurança para sinagogas e eventos judaicos. Certificação internacional em gestão de risco.</div>
-      <div class="pro-tags">
-        <span class="tag">Consultoria</span>
-        <span class="tag">Planejamento</span>
-        <span class="tag">Sinagogas</span>
-      </div>
-      <div class="pro-rate">R$ 2.400 <small>/ projeto</small></div>
-      <button class="pro-btn">Ver perfil completo</button>
-    </div>
-    <div class="pro-card">
-      <div class="pro-header">
-        <div class="pro-avatar av-teal">MS</div>
-        <div>
-          <div class="pro-name">Marcos Sasson</div>
-          <div class="pro-role">Nível 2 · Coordenador</div>
-          <div class="pro-regiao">📍 Moema</div>
-        </div>
-      </div>
-      <div class="pro-stars">★★★★☆</div>
-      <div class="pro-bio">Ex-segurança da Federação Israelita de SP. Coordena equipes em eventos de médio e grande porte há 10 anos.</div>
-      <div class="pro-tags">
-        <span class="tag">Coordenação</span>
-        <span class="tag">Eventos grandes</span>
-      </div>
-      <div class="pro-rate">R$ 850 <small>/ evento</small></div>
-      <button class="pro-btn">Ver perfil completo</button>
-    </div>
-  </div>
+<div class="pros-grid" id="pros-grid">
+  <div style="text-align:center;padding:2rem;color:#666;">Carregando profissionais...</div>
+</div>
 </section>
+
+<script>
+async function carregarProfissionais() {
+  try {
+    const resp = await fetch('/api/profissionais');
+    const data = await resp.json();
+    const grid = document.getElementById('pros-grid');
+
+    if (!data.profissionais || data.profissionais.length === 0) {
+      grid.innerHTML = '<div style="text-align:center;padding:2rem;color:#666;">Nenhum profissional disponível no momento.</div>';
+      return;
+    }
+
+    grid.innerHTML = data.profissionais.map(p => {
+      const iniciais = p.nome ? p.nome.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() : '??';
+      const valor = p.valor_diaria ? `R$ ${Number(p.valor_diaria).toLocaleString('pt-BR')}` : 'Consultar';
+      const foto = p.foto_url ? `<img src="${p.foto_url}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">` : `<div class="pro-avatar av-blue">${iniciais}</div>`;
+      return `
+        <div class="pro-card">
+          <div class="pro-header">
+            ${foto}
+            <div>
+              <div class="pro-name">${p.nome || 'Profissional'}</div>
+              <div class="pro-role">${p.especialidade || 'Segurança'}</div>
+              <div class="pro-regiao">📍 ${p.regiao || 'São Paulo'}</div>
+            </div>
+          </div>
+          <div class="pro-stars">★★★★★</div>
+          <div class="pro-bio">${p.apresentacao || ''}</div>
+          <div class="pro-price">${valor} <span>/ diária</span></div>
+          <a href="/contratar?prof=${p.id}" class="pro-btn ver-perfil-btn">Contratar agora</a>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    console.error(err);
+    document.getElementById('pros-grid').innerHTML = '<div style="text-align:center;padding:2rem;color:#666;">Erro ao carregar profissionais.</div>';
+  }
+}
+carregarProfissionais();
+</script>
 
 <!-- REGIÕES SP -->
 <div class="sp-section" id="regioes">
