@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
     const { data, error } = await supabase
       .from('colaboradores')
       .select('*')
-      .eq('aprovado', true)
+      .eq('status', 'aprovado')
       .order('criado_em', { ascending: false });
 
     if (error) throw error;
