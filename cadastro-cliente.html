@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BitaHub — Cadastro de Cliente</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#fff;min-height:100vh;display:flex;flex-direction:column}
+
+  nav{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2rem;background:rgba(10,10,15,0.88);backdrop-filter:blur(14px);border-bottom:0.5px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:100}
+  .nav-logo{font-family:'Sora',sans-serif;font-size:20px;font-weight:800}
+  .nav-logo span{color:#378ADD}
+  .nav-back{font-size:13px;color:rgba(255,255,255,0.45);text-decoration:none;transition:color 0.2s}
+  .nav-back:hover{color:#fff}
+
+  .page{flex:1;display:flex;align-items:center;justify-content:center;padding:3rem 1.5rem}
+
+  /* CARD */
+  .card{background:#111118;border:0.5px solid rgba(255,255,255,0.08);border-radius:20px;padding:2.5rem;width:100%;max-width:480px}
+
+  .card-icon{width:48px;height:48px;border-radius:12px;background:rgba(55,138,221,0.12);border:0.5px solid rgba(55,138,221,0.25);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:1.25rem}
+  .card-title{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;margin-bottom:6px}
+  .card-desc{font-size:14px;color:rgba(255,255,255,0.4);line-height:1.6;margin-bottom:2rem}
+
+  .field{margin-bottom:1.1rem}
+  .field label{font-size:13px;color:rgba(255,255,255,0.5);display:block;margin-bottom:6px;font-weight:500}
+  .field input,.field select,.field textarea{width:100%;background:#0d0d15;border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;font-size:14px;color:#fff;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;appearance:none}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(55,138,221,0.5)}
+  .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.2)}
+  .field select option{background:#111118;color:#fff}
+  .field textarea{resize:vertical;min-height:80px;line-height:1.5}
+  .field-hint{font-size:11px;color:rgba(255,255,255,0.3);margin-top:5px;line-height:1.5}
+
+  /* CONTATO */
+  .contato-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .contato-opt{background:#0d0d15;border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px}
+  .contato-opt:hover{border-color:rgba(55,138,221,0.3)}
+  .contato-opt.selected{border-color:#378ADD;background:rgba(55,138,221,0.08)}
+  .contato-opt input[type=radio]{display:none}
+  .contato-icon{font-size:18px}
+  .contato-label{font-size:13px;font-weight:500}
+  .contato-sub{font-size:11px;color:rgba(255,255,255,0.35)}
+
+  /* VÍNCULOS */
+  .vinculo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .vinculo-opt{background:#0d0d15;border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 12px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:13px}
+  .vinculo-opt:hover{border-color:rgba(55,138,221,0.3)}
+  .vinculo-opt.selected{border-color:#378ADD;background:rgba(55,138,221,0.08);color:#378ADD}
+  .vinculo-opt input[type=radio]{display:none}
+
+  /* DIVIDER */
+  .divider{height:0.5px;background:rgba(255,255,255,0.06);margin:1.5rem 0}
+
+  /* BTN */
+  .btn-submit{width:100%;padding:14px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s;margin-top:0.5rem}
+  .btn-submit:hover{background:#378ADD}
+  .btn-submit:disabled{opacity:0.6;cursor:not-allowed}
+
+  /* AVISO */
+  .aviso{background:rgba(55,138,221,0.06);border:0.5px solid rgba(55,138,221,0.18);border-radius:10px;padding:1rem 1.1rem;font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;margin-top:1.25rem}
+  .aviso strong{color:#378ADD;font-weight:500}
+
+  /* ERRO / SUCESSO */
+  .msg{padding:12px 14px;border-radius:10px;font-size:14px;margin-bottom:1rem;display:none;line-height:1.5}
+  .msg.erro{background:rgba(220,38,38,0.1);border:0.5px solid rgba(220,38,38,0.25);color:#FCA5A5}
+  .msg.sucesso{background:rgba(29,158,117,0.1);border:0.5px solid rgba(29,158,117,0.25);color:#6EE7B7}
+
+  /* SUCESSO TELA */
+  .sucesso-screen{display:none;text-align:center;padding:2rem}
+  .sucesso-icon{font-size:56px;margin-bottom:1rem}
+  .sucesso-title{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;margin-bottom:8px}
+  .sucesso-desc{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.6;max-width:320px;margin:0 auto}
+
+  @media(max-width:480px){
+    .card{padding:1.75rem 1.25rem}
+    .contato-row{grid-template-columns:1fr}
+    .vinculo-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Bita<span>Hub</span></div>
+  <a href="/bitahub-home.html" class="nav-back">← Voltar</a>
+</nav>
+
+<div class="page">
+  <div class="card">
+
+    <!-- FORMULÁRIO -->
+    <div id="form-section">
+      <div class="card-icon">🔐</div>
+      <div class="card-title">Solicitar acesso</div>
+      <div class="card-desc">Preencha seus dados para solicitar acesso à plataforma. Após análise da equipe BitaHub, você receberá o acesso para visualizar e contratar profissionais.</div>
+
+      <div class="msg erro" id="msg-erro"></div>
+      <div class="msg sucesso" id="msg-sucesso"></div>
+
+      <!-- NOME -->
+      <div class="field">
+        <label>Nome completo *</label>
+        <input type="text" id="nome" placeholder="Seu nome completo" />
+      </div>
+
+      <!-- CPF -->
+      <div class="field">
+        <label>CPF *</label>
+        <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" />
+      </div>
+
+      <!-- EMAIL -->
+      <div class="field">
+        <label>Email *</label>
+        <input type="email" id="email" placeholder="seu@email.com" />
+      </div>
+
+      <!-- VÍNCULO COM A COMUNIDADE -->
+      <div class="field">
+        <label>Vínculo com a comunidade *</label>
+        <div class="vinculo-grid">
+          <label class="vinculo-opt" onclick="selecionarVinculo(this,'sinagoga')">
+            <input type="radio" name="vinculo" value="sinagoga"> 🕍 Sinagoga
+          </label>
+          <label class="vinculo-opt" onclick="selecionarVinculo(this,'clube')">
+            <input type="radio" name="vinculo" value="clube"> 🏠 Clube judaico
+          </label>
+          <label class="vinculo-opt" onclick="selecionarVinculo(this,'escola')">
+            <input type="radio" name="vinculo" value="escola"> 📚 Escola judaica
+          </label>
+          <label class="vinculo-opt" onclick="selecionarVinculo(this,'familiar')">
+            <input type="radio" name="vinculo" value="familiar"> 👨‍👩‍👧 Familiar da comunidade
+          </label>
+          <label class="vinculo-opt" onclick="selecionarVinculo(this,'empresarial')">
+            <input type="radio" name="vinculo" value="empresarial"> 💼 Empresarial
+          </label>
+          <label class="vinculo-opt" onclick="selecionarVinculo(this,'outro')">
+            <input type="radio" name="vinculo" value="outro"> ➕ Outro
+          </label>
+        </div>
+      </div>
+
+      <!-- NOME DA INSTITUIÇÃO -->
+      <div class="field">
+        <label>Nome da instituição / comunidade</label>
+        <input type="text" id="instituicao" placeholder="Ex: Congregação Israelita Paulista, Hebraica..." />
+        <div class="field-hint">Opcional — ajuda na verificação do seu cadastro</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- PREFERÊNCIA DE CONTATO -->
+      <div class="field">
+        <label>Como prefere receber o acesso após aprovação? *</label>
+        <div class="contato-row">
+          <label class="contato-opt" onclick="selecionarContato(this,'email')">
+            <input type="radio" name="contato" value="email">
+            <div class="contato-icon">✉️</div>
+            <div>
+              <div class="contato-label">Email</div>
+              <div class="contato-sub">Link de acesso por email</div>
+            </div>
+          </label>
+          <label class="contato-opt" onclick="selecionarContato(this,'whatsapp')">
+            <input type="radio" name="contato" value="whatsapp">
+            <div class="contato-icon">💬</div>
+            <div>
+              <div class="contato-label">WhatsApp</div>
+              <div class="contato-sub">Aviso pelo WhatsApp</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- TELEFONE (aparece se escolher WhatsApp) -->
+      <div class="field" id="campo-tel" style="display:none">
+        <label>WhatsApp *</label>
+        <input type="text" id="telefone" placeholder="(11) 99999-9999" maxlength="15" oninput="mascaraTel(this)" />
+      </div>
+
+      <button class="btn-submit" id="btn-enviar" onclick="enviarCadastro()">Solicitar acesso</button>
+
+      <div class="aviso">
+        🔒 <strong>Seus dados estão protegidos.</strong> O acesso à lista de profissionais é restrito e verificado manualmente pela equipe BitaHub antes de ser liberado.
+      </div>
+    </div>
+
+    <!-- TELA DE SUCESSO -->
+    <div class="sucesso-screen" id="sucesso-screen">
+      <div class="sucesso-icon">✅</div>
+      <div class="sucesso-title">Solicitação enviada!</div>
+      <div class="sucesso-desc">
+        Recebemos seu cadastro e vamos analisar em breve.<br><br>
+        Você será notificado por <strong id="canal-escolhido"></strong> assim que seu acesso for aprovado.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://mbeseudygnbmicxyhhoh.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_ncv2NBhaSFmnzkvKHpNu2w_3nZrwqGz';
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  let vinculoSelecionado = '';
+  let contatoSelecionado = '';
+
+  function selecionarVinculo(el, valor) {
+    document.querySelectorAll('.vinculo-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    vinculoSelecionado = valor;
+  }
+
+  function selecionarContato(el, valor) {
+    document.querySelectorAll('.contato-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    contatoSelecionado = valor;
+    document.getElementById('campo-tel').style.display = valor === 'whatsapp' ? 'block' : 'none';
+  }
+
+  function mascaraCPF(el) {
+    let v = el.value.replace(/\D/g,'');
+    if(v.length>3) v = v.substring(0,3)+'.'+v.substring(3);
+    if(v.length>7) v = v.substring(0,7)+'.'+v.substring(7);
+    if(v.length>11) v = v.substring(0,11)+'-'+v.substring(11);
+    el.value = v.substring(0,14);
+  }
+
+  function mascaraTel(el) {
+    let v = el.value.replace(/\D/g,'');
+    if(v.length>0) v = '('+v;
+    if(v.length>3) v = v.substring(0,3)+') '+v.substring(3);
+    if(v.length>10) v = v.substring(0,10)+'-'+v.substring(10);
+    el.value = v.substring(0,15);
+  }
+
+  function mostrarErro(msg) {
+    const el = document.getElementById('msg-erro');
+    el.textContent = msg;
+    el.style.display = 'block';
+    document.getElementById('msg-sucesso').style.display = 'none';
+  }
+
+  function validarCPF(cpf) {
+    cpf = cpf.replace(/\D/g,'');
+    return cpf.length === 11;
+  }
+
+  async function enviarCadastro() {
+    const nome       = document.getElementById('nome').value.trim();
+    const cpf        = document.getElementById('cpf').value.trim();
+    const email      = document.getElementById('email').value.trim();
+    const instituicao= document.getElementById('instituicao').value.trim();
+    const telefone   = document.getElementById('telefone').value.trim();
+    const btn        = document.getElementById('btn-enviar');
+
+    document.getElementById('msg-erro').style.display = 'none';
+
+    if (!nome)                        return mostrarErro('Por favor, informe seu nome completo.');
+    if (!validarCPF(cpf))             return mostrarErro('CPF inválido. Verifique e tente novamente.');
+    if (!email || !email.includes('@')) return mostrarErro('Email inválido.');
+    if (!vinculoSelecionado)          return mostrarErro('Selecione seu vínculo com a comunidade.');
+    if (!contatoSelecionado)          return mostrarErro('Selecione como prefere receber o acesso.');
+    if (contatoSelecionado === 'whatsapp' && telefone.length < 14)
+                                      return mostrarErro('Informe seu número de WhatsApp.');
+
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    try {
+      const { error } = await db.from('clientes').insert([{
+        nome,
+        cpf,
+        email,
+        vinculo: vinculoSelecionado,
+        instituicao: instituicao || null,
+        contato_preferido: contatoSelecionado,
+        telefone: contatoSelecionado === 'whatsapp' ? telefone : null,
+        status: 'pendente'
+      }]);
+
+      if (error) {
+        if (error.code === '23505') return mostrarErro('Este CPF ou email já está cadastrado.');
+        throw error;
+      }
+
+      document.getElementById('form-section').style.display = 'none';
+      document.getElementById('sucesso-screen').style.display = 'block';
+      document.getElementById('canal-escolhido').textContent =
+        contatoSelecionado === 'email' ? 'email' : 'WhatsApp';
+
+    } catch(e) {
+      console.error(e);
+      mostrarErro('Erro ao enviar cadastro. Tente novamente.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Solicitar acesso';
+    }
+  }
+</script>
+</body>
+</html>

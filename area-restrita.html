@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BitaHub — Profissionais</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#fff;min-height:100vh}
+
+  nav{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2rem;background:rgba(10,10,15,0.95);border-bottom:0.5px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:100;backdrop-filter:blur(14px)}
+  .nav-logo{font-family:'Sora',sans-serif;font-size:20px;font-weight:800}
+  .nav-logo span{color:#378ADD}
+  .nav-right{display:flex;align-items:center;gap:1rem}
+  .nav-user{font-size:13px;color:rgba(255,255,255,0.45)}
+  .nav-user strong{color:#fff}
+  .btn-sair{font-size:12px;padding:6px 14px;border-radius:8px;border:0.5px solid rgba(255,255,255,0.15);background:transparent;color:rgba(255,255,255,0.45);cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
+  .btn-sair:hover{border-color:rgba(220,38,38,0.4);color:#FCA5A5}
+
+  .acesso-badge{display:flex;align-items:center;gap:8px;background:rgba(29,158,117,0.1);border:0.5px solid rgba(29,158,117,0.25);border-radius:8px;padding:6px 14px;font-size:12px;color:#1D9E75;font-weight:600;margin:1.5rem 2rem 0}
+
+  .page{max-width:1100px;margin:0 auto;padding:2rem}
+
+  .page-title{font-family:'Sora',sans-serif;font-size:28px;font-weight:800;margin-bottom:6px}
+  .page-desc{font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:2rem;line-height:1.6}
+
+  .filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem}
+  .filter-btn{font-size:12px;padding:6px 16px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.45);background:transparent;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif}
+  .filter-btn:hover,.filter-btn.active{border-color:rgba(55,138,221,0.4);color:#378ADD;background:rgba(55,138,221,0.08)}
+
+  .pros-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .pro-card{background:#111118;border:0.5px solid rgba(255,255,255,0.07);border-radius:16px;padding:1.5rem;transition:all 0.2s}
+  .pro-card:hover{border-color:rgba(127,119,221,0.25);transform:translateY(-2px)}
+  .pro-header{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+  .pro-avatar{width:48px;height:48px;border-radius:50%;background:rgba(55,138,221,0.15);color:#378ADD;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+  .pro-name{font-size:14px;font-weight:600}
+  .pro-role{font-size:11px;color:rgba(255,255,255,0.38);margin-top:2px}
+  .pro-regiao{font-size:11px;color:rgba(55,138,221,0.7);margin-top:2px;font-weight:500}
+  .pro-bio{font-size:12px;color:rgba(255,255,255,0.42);line-height:1.6;margin-bottom:1rem}
+  .pro-stars{color:#EF9F27;font-size:12px;margin-bottom:0.75rem}
+  .pro-rate{font-size:15px;font-weight:700;margin-bottom:1rem}
+  .pro-rate small{font-size:11px;font-weight:400;color:rgba(255,255,255,0.38)}
+  .pro-btn{display:block;text-align:center;padding:9px;border-radius:8px;background:rgba(55,138,221,0.08);border:0.5px solid rgba(55,138,221,0.22);color:#378ADD;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none}
+  .pro-btn:hover{background:rgba(55,138,221,0.18)}
+
+  .loading{text-align:center;padding:4rem;color:rgba(255,255,255,0.3)}
+  .spinner{width:24px;height:24px;border:2px solid rgba(255,255,255,0.1);border-top-color:#378ADD;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .acesso-negado{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;text-align:center;padding:2rem}
+  .acesso-negado-icon{font-size:56px;margin-bottom:1rem}
+  .acesso-negado-title{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;margin-bottom:8px}
+  .acesso-negado-desc{font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:1.5rem;max-width:320px;line-height:1.6}
+  .btn-ir{padding:12px 28px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;font-family:'Inter',sans-serif}
+
+  @media(max-width:768px){
+    .pros-grid{grid-template-columns:1fr}
+    nav{padding:1rem 1.25rem}
+    .page{padding:1.25rem}
+    .acesso-badge{margin:1rem 1.25rem 0}
+  }
+</style>
+</head>
+<body>
+
+<!-- ACESSO NEGADO (default) -->
+<div id="acesso-negado" class="acesso-negado">
+  <div class="acesso-negado-icon">🔒</div>
+  <div class="acesso-negado-title">Acesso restrito</div>
+  <div class="acesso-negado-desc">Esta área é exclusiva para clientes aprovados pela equipe BitaHub.</div>
+  <a href="/login-cliente.html" class="btn-ir">Fazer login</a>
+</div>
+
+<!-- CONTEÚDO RESTRITO -->
+<div id="conteudo" style="display:none">
+  <nav>
+    <div class="nav-logo">Bita<span>Hub</span></div>
+    <div class="nav-right">
+      <div class="nav-user">Olá, <strong id="nome-usuario"></strong></div>
+      <button class="btn-sair" onclick="sair()">Sair</button>
+    </div>
+  </nav>
+
+  <div class="acesso-badge">
+    ✅ Área restrita — acesso verificado pela BitaHub
+  </div>
+
+  <div class="page">
+    <div class="page-title">Profissionais disponíveis</div>
+    <div class="page-desc">Todos verificados e aprovados pela equipe BitaHub. Clique em "Ver perfil" para conhecer melhor e contratar.</div>
+
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="filtrar('',this)">Todos</button>
+      <button class="filter-btn" onclick="filtrar('Higienópolis',this)">Higienópolis</button>
+      <button class="filter-btn" onclick="filtrar('Jardins',this)">Jardins</button>
+      <button class="filter-btn" onclick="filtrar('Moema',this)">Moema</button>
+      <button class="filter-btn" onclick="filtrar('Perdizes',this)">Perdizes</button>
+      <button class="filter-btn" onclick="filtrar('Grande SP',this)">Grande SP</button>
+    </div>
+
+    <div class="pros-grid" id="pros-grid">
+      <div class="loading"><div class="spinner"></div>Carregando profissionais...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://mbeseudygnbmicxyhhoh.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_ncv2NBhaSFmnzkvKHpNu2w_3nZrwqGz';
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  let todosPros = [];
+
+  function sair() {
+    sessionStorage.removeItem('bita_cliente');
+    window.location.href = '/login-cliente.html';
+  }
+
+  function filtrar(regiao, el) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    const filtrados = regiao ? todosPros.filter(p => (p.regiao||'').toLowerCase().includes(regiao.toLowerCase())) : todosPros;
+    renderPros(filtrados);
+  }
+
+  function renderPros(lista) {
+    const grid = document.getElementById('pros-grid');
+    if (!lista.length) {
+      grid.innerHTML = '<div class="loading">Nenhum profissional encontrado nessa região.</div>';
+      return;
+    }
+    grid.innerHTML = lista.map(p => {
+      const iniciais = p.nome ? p.nome.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() : '??';
+      const foto = p.foto_url
+        ? `<img src="${p.foto_url}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">`
+        : `<div class="pro-avatar">${iniciais}</div>`;
+      const valor = p.valor_diaria ? `R$ ${Number(p.valor_diaria).toLocaleString('pt-BR')}` : 'Consultar';
+      return `
+        <div class="pro-card">
+          <div class="pro-header">
+            ${foto}
+            <div>
+              <div class="pro-name">${p.nome||'—'}</div>
+              <div class="pro-role">${p.especialidade||'Segurança'}</div>
+              <div class="pro-regiao">📍 ${p.regiao||'São Paulo'}</div>
+            </div>
+          </div>
+          <div class="pro-stars">★★★★★</div>
+          <div class="pro-bio">${(p.apresentacao||'').substring(0,100)}${p.apresentacao&&p.apresentacao.length>100?'…':''}</div>
+          <div class="pro-rate">${valor} <small>/ diária</small></div>
+          <a href="/profissional.html?id=${p.id}" class="pro-btn">Ver perfil completo →</a>
+        </div>`;
+    }).join('');
+  }
+
+  async function carregarPros() {
+    const { data, error } = await db
+      .from('colaboradores')
+      .select('id, nome, apresentacao, foto_url, valor_diaria, nivel_servico, especialidade, regiao')
+      .eq('status', 'aprovado')
+      .order('criado_em', { ascending: false });
+
+    if (error || !data) {
+      document.getElementById('pros-grid').innerHTML = '<div class="loading">Erro ao carregar profissionais.</div>';
+      return;
+    }
+    todosPros = data;
+    renderPros(data);
+  }
+
+  // Verificar sessão
+  const sessao = sessionStorage.getItem('bita_cliente');
+  if (sessao) {
+    try {
+      const cliente = JSON.parse(sessao);
+      document.getElementById('acesso-negado').style.display = 'none';
+      document.getElementById('conteudo').style.display = 'block';
+      document.getElementById('nome-usuario').textContent = cliente.nome.split(' ')[0];
+      carregarPros();
+    } catch(e) {
+      sessionStorage.removeItem('bita_cliente');
+    }
+  }
+</script>
+</body>
+</html>

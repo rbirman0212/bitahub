@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BitaHub — Acesso de Cliente</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#fff;min-height:100vh;display:flex;flex-direction:column}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2rem;background:rgba(10,10,15,0.88);border-bottom:0.5px solid rgba(255,255,255,0.06)}
+  .nav-logo{font-family:'Sora',sans-serif;font-size:20px;font-weight:800}
+  .nav-logo span{color:#378ADD}
+  .page{flex:1;display:flex;align-items:center;justify-content:center;padding:3rem 1.5rem}
+  .card{background:#111118;border:0.5px solid rgba(255,255,255,0.08);border-radius:20px;padding:2.5rem;width:100%;max-width:400px;text-align:center}
+  .card-icon{font-size:40px;margin-bottom:1rem}
+  .card-title{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;margin-bottom:8px}
+  .card-desc{font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:2rem;line-height:1.6}
+  .field{margin-bottom:1rem;text-align:left}
+  .field label{font-size:13px;color:rgba(255,255,255,0.5);display:block;margin-bottom:6px}
+  .field input{width:100%;background:#0d0d15;border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;font-size:14px;color:#fff;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s}
+  .field input:focus{border-color:rgba(55,138,221,0.5)}
+  .field input::placeholder{color:rgba(255,255,255,0.2)}
+  .btn{width:100%;padding:13px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s;margin-top:0.5rem}
+  .btn:hover{background:#378ADD}
+  .btn:disabled{opacity:0.6;cursor:not-allowed}
+  .msg{padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:1rem;display:none;text-align:left;line-height:1.5}
+  .msg.erro{background:rgba(220,38,38,0.1);border:0.5px solid rgba(220,38,38,0.25);color:#FCA5A5}
+  .link-cadastro{margin-top:1.5rem;font-size:13px;color:rgba(255,255,255,0.35)}
+  .link-cadastro a{color:#378ADD;text-decoration:none}
+  .link-cadastro a:hover{text-decoration:underline}
+  .aguardando{background:rgba(239,159,39,0.1);border:0.5px solid rgba(239,159,39,0.25);border-radius:10px;padding:1rem;font-size:13px;color:#EF9F27;display:none;line-height:1.6;margin-bottom:1rem}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">Bita<span>Hub</span></div>
+</nav>
+<div class="page">
+  <div class="card">
+    <div class="card-icon">🔐</div>
+    <div class="card-title">Acesso de cliente</div>
+    <div class="card-desc">Entre com o email cadastrado para acessar a plataforma.</div>
+
+    <div class="msg erro" id="msg-erro"></div>
+    <div class="aguardando" id="msg-aguardando">
+      ⏳ Seu cadastro está <strong>em análise</strong>. Nossa equipe entrará em contato em breve pelo canal escolhido.
+    </div>
+
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')entrar()"/>
+    </div>
+    <div class="field">
+      <label>CPF</label>
+      <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" onkeydown="if(event.key==='Enter')entrar()"/>
+    </div>
+    <button class="btn" id="btn-entrar" onclick="entrar()">Entrar</button>
+
+    <div class="link-cadastro">
+      Não tem cadastro? <a href="/cadastro-cliente.html">Solicitar acesso</a>
+    </div>
+  </div>
+</div>
+<script>
+  const SUPABASE_URL = 'https://mbeseudygnbmicxyhhoh.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_ncv2NBhaSFmnzkvKHpNu2w_3nZrwqGz';
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  function mascaraCPF(el) {
+    let v = el.value.replace(/\D/g,'');
+    if(v.length>3) v = v.substring(0,3)+'.'+v.substring(3);
+    if(v.length>7) v = v.substring(0,7)+'.'+v.substring(7);
+    if(v.length>11) v = v.substring(0,11)+'-'+v.substring(11);
+    el.value = v.substring(0,14);
+  }
+
+  async function entrar() {
+    const email = document.getElementById('email').value.trim();
+    const cpf   = document.getElementById('cpf').value.trim();
+    const btn   = document.getElementById('btn-entrar');
+    const erro  = document.getElementById('msg-erro');
+    const aguardando = document.getElementById('msg-aguardando');
+
+    erro.style.display = 'none';
+    aguardando.style.display = 'none';
+
+    if (!email || !cpf) {
+      erro.textContent = 'Preencha email e CPF.';
+      erro.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Verificando...';
+
+    const { data, error } = await db
+      .from('clientes')
+      .select('id, nome, status')
+      .eq('email', email)
+      .eq('cpf', cpf)
+      .single();
+
+    btn.disabled = false;
+    btn.textContent = 'Entrar';
+
+    if (error || !data) {
+      erro.textContent = 'Email ou CPF incorretos. Verifique seus dados.';
+      erro.style.display = 'block';
+      return;
+    }
+
+    if (data.status === 'pendente') {
+      aguardando.style.display = 'block';
+      return;
+    }
+
+    if (data.status === 'reprovado') {
+      erro.textContent = 'Acesso não autorizado. Entre em contato com a equipe BitaHub.';
+      erro.style.display = 'block';
+      return;
+    }
+
+    // aprovado — salva sessão simples e redireciona
+    sessionStorage.setItem('bita_cliente', JSON.stringify({ id: data.id, nome: data.nome }));
+    window.location.href = '/area-restrita.html';
+  }
+</script>
+</body>
+</html>
