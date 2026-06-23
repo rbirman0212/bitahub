@@ -10,29 +10,30 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#fff;min-height:100vh}
 
+  /* NAV */
   nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:#111118;border-bottom:0.5px solid rgba(255,255,255,0.07)}
   .nav-logo{font-family:'Sora',sans-serif;font-size:18px;font-weight:800}
   .nav-logo span{color:#378ADD}
   .nav-badge{font-size:11px;background:rgba(127,119,221,0.15);color:#7F77DD;padding:4px 10px;border-radius:20px;font-weight:500;margin-left:10px}
-  .nav-right{display:flex;align-items:center;gap:1rem}
-  .nav-data{font-size:13px;color:rgba(255,255,255,0.35)}
-  .btn-sair{font-size:12px;padding:6px 14px;border-radius:8px;border:0.5px solid rgba(255,255,255,0.15);background:transparent;color:rgba(255,255,255,0.45);cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
-  .btn-sair:hover{border-color:rgba(220,38,38,0.4);color:#FCA5A5}
+  .nav-right{font-size:13px;color:rgba(255,255,255,0.35)}
 
+  /* LOGIN */
   .login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem}
   .login-card{background:#111118;border:0.5px solid rgba(255,255,255,0.08);border-radius:20px;padding:2.5rem;width:100%;max-width:380px;text-align:center}
   .login-logo{font-family:'Sora',sans-serif;font-size:28px;font-weight:800;margin-bottom:4px}
   .login-logo span{color:#378ADD}
   .login-sub{font-size:12px;color:rgba(255,255,255,0.3);margin-bottom:2rem;letter-spacing:1px;text-transform:uppercase}
   .login-label{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:6px;text-align:left;display:block}
-  input[type=password],input[type=email]{width:100%;background:#0d0d15;border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;font-size:14px;color:#fff;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;margin-bottom:1rem}
+  input[type=password],input[type=text]{width:100%;background:#0d0d15;border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;font-size:14px;color:#fff;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;margin-bottom:1rem}
   input:focus{border-color:rgba(55,138,221,0.5)}
   input::placeholder{color:rgba(255,255,255,0.2)}
-  .login-error{font-size:13px;color:#FCA5A5;margin-bottom:1rem;display:none;padding:10px;background:rgba(220,38,38,0.1);border-radius:8px;border:0.5px solid rgba(220,38,38,0.2)}
+  .login-error{font-size:13px;color:#FCA5A5;margin-bottom:1rem;display:none}
 
+  /* MAIN */
   .main{display:none;padding:2rem}
   .main-inner{max-width:1000px;margin:0 auto}
 
+  /* MÉTRICAS */
   .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem}
   .metric{background:#111118;border:0.5px solid rgba(255,255,255,0.07);border-radius:14px;padding:1.25rem}
   .metric-label{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:6px}
@@ -42,11 +43,13 @@
   .metric-value.green{color:#1D9E75}
   .metric-value.purple{color:#7F77DD}
 
+  /* TABS */
   .tabs{display:flex;gap:8px;margin-bottom:1.5rem}
   .tab{padding:8px 20px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.1);font-size:13px;cursor:pointer;background:transparent;color:rgba(255,255,255,0.4);transition:all 0.2s;font-family:'Inter',sans-serif}
   .tab.active{background:rgba(55,138,221,0.1);border-color:rgba(55,138,221,0.3);color:#378ADD}
   .tab-badge{display:inline-block;background:#EF9F27;color:#000;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:6px}
 
+  /* CARDS COLABORADOR */
   .cards{display:flex;flex-direction:column;gap:12px}
   .colab-card{background:#111118;border:0.5px solid rgba(255,255,255,0.07);border-radius:14px;padding:1.25rem;display:grid;grid-template-columns:56px 1fr auto;gap:1rem;align-items:start}
   .colab-card.aprovado{border-left:3px solid #1D9E75}
@@ -54,6 +57,7 @@
   .colab-card.reprovado{border-left:3px solid #DC2626;opacity:0.6}
   .avatar{width:56px;height:56px;border-radius:50%;background:rgba(55,138,221,0.15);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#378ADD;flex-shrink:0;overflow:hidden}
   .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+  .colab-info{}
   .colab-name{font-size:15px;font-weight:600;margin-bottom:3px}
   .colab-meta{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:6px;display:flex;gap:12px;flex-wrap:wrap}
   .colab-bio{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.55;margin-bottom:8px}
@@ -71,16 +75,20 @@
   .btn-wpp{padding:8px 16px;background:rgba(37,211,102,0.1);color:#25D366;border:0.5px solid rgba(37,211,102,0.25);border-radius:8px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;white-space:nowrap;text-decoration:none;display:block;text-align:center}
   .btn-wpp:hover{background:rgba(37,211,102,0.2)}
 
+  /* EMPTY */
   .empty{text-align:center;padding:3rem;color:rgba(255,255,255,0.25);font-size:14px}
   .empty-icon{font-size:40px;margin-bottom:1rem}
+
+  /* LOADING */
   .loading{text-align:center;padding:3rem;color:rgba(255,255,255,0.3);font-size:14px}
   .spinner{width:24px;height:24px;border:2px solid rgba(255,255,255,0.1);border-top-color:#378ADD;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem}
   @keyframes spin{to{transform:rotate(360deg)}}
 
+  /* BOTÃO */
   .btn-primary{width:100%;padding:13px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s}
   .btn-primary:hover{background:#378ADD}
-  .btn-primary:disabled{opacity:0.6;cursor:not-allowed}
 
+  /* TOAST */
   .toast{position:fixed;bottom:2rem;right:2rem;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:500;z-index:999;display:none;animation:slideIn 0.3s ease}
   .toast.success{background:#1D9E75;color:#fff}
   .toast.error{background:#DC2626;color:#fff}
@@ -101,30 +109,26 @@
   <div class="login-card">
     <div class="login-logo">Bita<span>Hub</span></div>
     <div class="login-sub">Painel Administrativo</div>
-    <div class="login-error" id="loginError"></div>
-    <label class="login-label">Email</label>
-    <input type="email" id="emailInput" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')entrar()" />
-    <label class="login-label">Senha</label>
-    <input type="password" id="senhaInput" placeholder="Sua senha" onkeydown="if(event.key==='Enter')entrar()" />
-    <button class="btn-primary" id="btnEntrar" onclick="entrar()">Entrar no painel</button>
+    <div class="login-error" id="loginError">Senha incorreta.</div>
+    <label class="login-label">Senha de acesso</label>
+    <input type="password" id="senhaInput" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')entrar()" />
+    <button class="btn-primary" onclick="entrar()">Entrar no painel</button>
   </div>
 </div>
 
-<!-- NAV -->
+<!-- PAINEL -->
 <nav style="display:none" id="navBar">
   <div style="display:flex;align-items:center">
     <div class="nav-logo">Bita<span>Hub</span></div>
     <span class="nav-badge">Admin</span>
   </div>
-  <div class="nav-right">
-    <div class="nav-data" id="navData"></div>
-    <button class="btn-sair" onclick="sair()">Sair</button>
-  </div>
+  <div class="nav-right" id="navData"></div>
 </nav>
 
-<!-- PAINEL -->
 <div class="main" id="mainPanel">
   <div class="main-inner">
+
+    <!-- MÉTRICAS -->
     <div class="metrics">
       <div class="metric">
         <div class="metric-label">Total cadastrados</div>
@@ -143,75 +147,50 @@
         <div class="metric-value purple" id="metReprovado">—</div>
       </div>
     </div>
+
+    <!-- TABS -->
     <div class="tabs">
       <button class="tab active" onclick="filtrar('pendente',this)">Pendentes <span class="tab-badge" id="badgePendente">0</span></button>
       <button class="tab" onclick="filtrar('aprovado',this)">Aprovados</button>
       <button class="tab" onclick="filtrar('reprovado',this)">Reprovados</button>
       <button class="tab" onclick="filtrar('todos',this)">Todos</button>
     </div>
+
+    <!-- LISTA -->
     <div class="cards" id="listaCards">
       <div class="loading"><div class="spinner"></div>Carregando colaboradores...</div>
     </div>
+
   </div>
 </div>
 
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
   const SUPABASE_URL = 'https://mbeseudygnbmicxyhhoh.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_ncv2NBhaSFmnzkvKHpNu2w_3nZrwqGz';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1iZXNldWR5Z25ibWljeHloaG9oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0OTgwNzgsImV4cCI6MjA5NzA3NDA3OH0.93Iv_FvAVJ41T0vriyVn3GYetzKFcb07gDoFNffTsAM';
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+  const SENHA_ADMIN = 'bitahub2025';
   let todosColabs = [];
   let filtroAtual = 'pendente';
 
-  async function verificarSessao() {
-    const { data: { session } } = await db.auth.getSession();
-    if (session) mostrarPainel(session.user.email);
-  }
-
-  async function entrar() {
-    const email = document.getElementById('emailInput').value.trim();
+  function entrar() {
     const senha = document.getElementById('senhaInput').value;
-    const btn = document.getElementById('btnEntrar');
-    const erro = document.getElementById('loginError');
-
-    if (!email || !senha) {
-      erro.textContent = 'Preencha email e senha.';
-      erro.style.display = 'block';
-      return;
+    if (senha === SENHA_ADMIN) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('navBar').style.display = 'flex';
+      document.getElementById('mainPanel').style.display = 'block';
+      const agora = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long' });
+      document.getElementById('navData').textContent = agora;
+      carregarColabs();
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+      document.getElementById('senhaInput').value = '';
+      document.getElementById('senhaInput').focus();
     }
-
-    btn.disabled = true;
-    btn.textContent = 'Entrando...';
-    erro.style.display = 'none';
-
-    const { data, error } = await db.auth.signInWithPassword({ email, password: senha });
-
-    if (error) {
-      erro.textContent = 'Email ou senha incorretos.';
-      erro.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Entrar no painel';
-      return;
-    }
-
-    mostrarPainel(data.user.email);
-  }
-
-  function mostrarPainel(email) {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('navBar').style.display = 'flex';
-    document.getElementById('mainPanel').style.display = 'block';
-    const agora = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long' });
-    document.getElementById('navData').textContent = agora;
-    carregarColabs();
-  }
-
-  async function sair() {
-    await db.auth.signOut();
-    location.reload();
   }
 
   async function carregarColabs() {
@@ -221,7 +200,7 @@
       .order('criado_em', { ascending: false });
 
     if (error) {
-      document.getElementById('listaCards').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div>Erro ao carregar dados.</div>';
+      document.getElementById('listaCards').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div>Erro ao carregar dados. Verifique a conexão.</div>';
       return;
     }
 
@@ -231,13 +210,14 @@
   }
 
   function atualizarMetricas() {
-    const pendentes  = todosColabs.filter(c => c.status === 'pendente').length;
-    const aprovados  = todosColabs.filter(c => c.status === 'aprovado').length;
+    const total = todosColabs.length;
+    const pendentes = todosColabs.filter(c => c.status === 'pendente').length;
+    const aprovados = todosColabs.filter(c => c.status === 'aprovado').length;
     const reprovados = todosColabs.filter(c => c.status === 'reprovado').length;
-    document.getElementById('metTotal').textContent    = todosColabs.length;
+    document.getElementById('metTotal').textContent = total;
     document.getElementById('metPendente').textContent = pendentes;
     document.getElementById('metAprovado').textContent = aprovados;
-    document.getElementById('metReprovado').textContent= reprovados;
+    document.getElementById('metReprovado').textContent = reprovados;
     document.getElementById('badgePendente').textContent = pendentes;
     document.getElementById('badgePendente').style.display = pendentes > 0 ? 'inline-block' : 'none';
   }
@@ -252,11 +232,13 @@
   function renderCards(status) {
     const lista = status === 'todos' ? todosColabs : todosColabs.filter(c => c.status === status);
     const container = document.getElementById('listaCards');
+
     if (lista.length === 0) {
       const msgs = { pendente:'Nenhum cadastro pendente.', aprovado:'Nenhum colaborador aprovado ainda.', reprovado:'Nenhum cadastro reprovado.', todos:'Nenhum colaborador cadastrado.' };
       container.innerHTML = `<div class="empty"><div class="empty-icon">✅</div>${msgs[status]||''}</div>`;
       return;
     }
+
     container.innerHTML = lista.map(c => cardHTML(c)).join('');
   }
 
@@ -265,13 +247,13 @@
     const foto = c.foto_url ? `<img src="${c.foto_url}" alt="${c.nome}">` : iniciais;
     const dataCad = new Date(c.criado_em).toLocaleDateString('pt-BR');
     const badgeClass = { pendente:'badge-pendente', aprovado:'badge-aprovado', reprovado:'badge-reprovado' }[c.status] || '';
-    const badgeText  = { pendente:'Pendente', aprovado:'Aprovado', reprovado:'Reprovado' }[c.status] || c.status;
-    const tel = c.whatsapp ? c.whatsapp.replace(/\D/g,'') : '';
+    const badgeText = { pendente:'Pendente', aprovado:'Aprovado', reprovado:'Reprovado' }[c.status] || c.status;
+
     const acoes = c.status === 'pendente' ? `
       <button class="btn-aprovar" onclick="mudarStatus('${c.id}','aprovado')">✓ Aprovar</button>
       <button class="btn-reprovar" onclick="mudarStatus('${c.id}','reprovado')">✗ Reprovar</button>
     ` : c.status === 'aprovado' ? `
-      ${tel ? `<a class="btn-wpp" href="https://wa.me/55${tel}" target="_blank">WhatsApp</a>` : ''}
+      <a class="btn-wpp" href="https://wa.me/55${c.whatsapp.replace(/\D/g,'')}" target="_blank">WhatsApp</a>
       <button class="btn-reprovar" onclick="mudarStatus('${c.id}','reprovado')">Revogar</button>
     ` : `
       <button class="btn-aprovar" onclick="mudarStatus('${c.id}','aprovado')">Reativar</button>
@@ -284,18 +266,15 @@
           <div class="colab-name">${c.nome || '—'}</div>
           <div class="colab-meta">
             <span>📱 ${c.whatsapp || '—'}</span>
-            <span>✉️ ${c.email || '—'}</span>
-            <span>🪪 ${c.cpf || '—'}</span>
             <span>💰 R$ ${c.valor_diaria || '—'}/diária</span>
             <span>📅 ${dataCad}</span>
             ${c.codigo_indicacao ? `<span>🔗 ${c.codigo_indicacao}</span>` : ''}
           </div>
           ${c.apresentacao ? `<div class="colab-bio">${c.apresentacao}</div>` : ''}
           <div class="colab-tags">
-            ${c.nivel_servico ? `<span class="ctag">${c.nivel_servico}</span>` : ''}
-            ${c.especialidade ? `<span class="ctag">${c.especialidade}</span>`  : ''}
-            ${c.regiao ? `<span class="ctag">📍 ${c.regiao}</span>` : ''}
-            ${c.indicado_por ? `<span class="ctag">Indicado: ${c.indicado_por}</span>` : ''}
+            <span class="ctag">Nível 1</span>
+            ${c.email ? `<span class="ctag">${c.email}</span>` : ''}
+            ${c.indicado_por ? `<span class="ctag">Indicado por: ${c.indicado_por}</span>` : ''}
           </div>
         </div>
         <div class="colab-actions">
@@ -307,13 +286,23 @@
   }
 
   async function mudarStatus(id, novoStatus) {
-    const { error } = await db.from('colaboradores').update({ status: novoStatus }).eq('id', id);
-    if (error) { showToast('Erro ao atualizar status.', 'error'); return; }
+    const { error } = await db
+      .from('colaboradores')
+      .update({ status: novoStatus })
+      .eq('id', id);
+
+    if (error) {
+      showToast('Erro ao atualizar status.', 'error');
+      return;
+    }
+
     const idx = todosColabs.findIndex(c => c.id === id);
     if (idx > -1) todosColabs[idx].status = novoStatus;
+
     atualizarMetricas();
     renderCards(filtroAtual);
-    const msgs = { aprovado:'✓ Colaborador aprovado!', reprovado:'Cadastro reprovado.' };
+
+    const msgs = { aprovado:'✓ Colaborador aprovado!', reprovado:'Cadastro reprovado.', reativado:'Colaborador reativado!' };
     showToast(msgs[novoStatus] || 'Status atualizado.', novoStatus === 'aprovado' ? 'success' : 'error');
   }
 
@@ -324,8 +313,6 @@
     t.style.display = 'block';
     setTimeout(() => t.style.display = 'none', 3000);
   }
-
-  verificarSessao();
 </script>
 </body>
 </html>
